@@ -76,8 +76,44 @@ Services:
 - Backend API: `http://localhost:8000`
 - API health check: `http://localhost:8000/api/v1/health`
 - OpenAPI docs: `http://localhost:8000/docs`
+- Kafka UI: `http://localhost:8080`
 
-The Compose setup mounts source directories for hot reload and runs both services on a shared Docker network.
+The Compose setup mounts source directories for hot reload and runs application and streaming services on a shared Docker network.
+
+## Kafka Streaming Foundation
+
+Phase 2 adds a local Kafka telemetry pipeline:
+
+```text
+Synthetic Event Generator -> Kafka Producer -> Kafka Topics -> Kafka Consumer -> Validated Telemetry
+```
+
+Kafka services:
+
+- `streaming-analytics-zookeeper`
+- `streaming-analytics-kafka`
+- `streaming-analytics-kafka-ui`
+- `streaming-analytics-producer`
+- `streaming-analytics-consumer`
+
+Topics:
+
+- `telemetry.login.events`
+- `telemetry.api.events`
+- `telemetry.network.events`
+- `telemetry.anomaly.events`
+- `telemetry.deadletter.events`
+
+Verification commands:
+
+```bash
+docker ps
+docker logs streaming-analytics-producer --tail 100
+docker logs streaming-analytics-consumer --tail 100
+docker exec streaming-analytics-kafka kafka-topics --bootstrap-server localhost:9092 --list
+```
+
+Detailed Phase 2 documentation is available in `docs/phase-2-kafka-streaming.md`.
 
 ## Backend Development
 
@@ -112,8 +148,8 @@ The frontend includes a professional dashboard shell, responsive sidebar layout,
 ## Phase Roadmap
 
 - Phase 1: Monorepo foundation, FastAPI shell, React shell, Docker development workflow.
-- Phase 2: PostgreSQL, Redis, persistent domain models, migrations, service contracts.
-- Phase 3: Kafka ingestion, producer libraries, event schemas, schema governance.
+- Phase 2: Kafka broker, topic initialization, synthetic telemetry producer, validating consumer, dead-letter support.
+- Phase 3: PostgreSQL, Redis, persistent domain models, migrations, service contracts.
 - Phase 4: Spark Structured Streaming jobs and batch replay strategy.
 - Phase 5: ML anomaly detection service and model lifecycle foundations.
 - Phase 6: Elasticsearch indexing, analytics APIs, and dashboard modules.
@@ -121,4 +157,4 @@ The frontend includes a professional dashboard shell, responsive sidebar layout,
 
 ## Current Scope
 
-Phase 1 deliberately does not implement Kafka, Spark, ML pipelines, dashboards, or production data stores. It provides the professional foundation those systems will build on.
+Phase 2 implements Kafka streaming infrastructure only. Spark, ML pipelines, dashboard integration, and production data stores remain future phases.
