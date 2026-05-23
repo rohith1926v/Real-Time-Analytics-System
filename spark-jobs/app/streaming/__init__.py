@@ -1,0 +1,1 @@
+"""Structured Streaming ingestion helpers."""

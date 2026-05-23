@@ -1,17 +1,28 @@
-# Real-Time Streaming Analytics Platform
+# Real-Time Streaming Analytics System
 
-An enterprise-grade foundation for a real-time streaming analytics platform. Phase 1 establishes the monorepo, development environment, service boundaries, API shell, UI shell, and Docker workflow that later phases will extend with Kafka, Spark Structured Streaming, anomaly detection, operational storage, observability, and cloud deployment.
+An enterprise-grade streaming analytics platform foundation for cybersecurity and operational telemetry. The system now includes a React analytics console, FastAPI service layer, Kafka telemetry streaming infrastructure, and a Spark Structured Streaming analytics engine.
 
-This repository is intentionally structured like a production engineering codebase: clear ownership boundaries, environment-driven configuration, containerized local workflows, typed frontend code, modular backend services, and documentation-first architecture decisions.
+This repository is structured as a production-oriented monorepo with clear service boundaries, environment-driven configuration, Dockerized local workflows, typed frontend code, modular backend services, resilient Kafka producers and consumers, and Spark jobs organized for maintainable distributed processing.
 
 ## Architecture
 
-The platform is organized as a monorepo with independently deployable application surfaces and dedicated folders for future streaming, processing, machine learning, infrastructure, and observability work.
+```text
+Synthetic Telemetry Generator
+    -> Kafka telemetry topics
+    -> Spark Structured Streaming
+    -> real-time transformations and window aggregations
+    -> analytics Kafka topics
+    -> future APIs, storage, ML, search, and dashboards
+```
 
-- `frontend` contains the React analytics console built with Vite, TypeScript, Tailwind CSS, React Router, and Axios.
-- `backend` contains the FastAPI service layer with versioned APIs, settings management, logging, CORS configuration, schemas, services, and database placeholders.
-- `kafka-producers`, `spark-jobs`, and `ml-models` are reserved for later platform capabilities.
-- `infrastructure`, `monitoring`, `docs`, and `architecture` hold operational assets and engineering documentation.
+Current platform components:
+
+- `frontend`: React, Vite, TypeScript, Tailwind CSS dashboard shell.
+- `backend`: FastAPI application with versioned APIs, settings management, CORS, logging, and health checks.
+- `kafka-producers`: Synthetic telemetry producer and validating Kafka consumer.
+- `spark-jobs`: Spark Structured Streaming analytics pipeline.
+- `docs`: Phase documentation and operational runbooks.
+- `infrastructure`, `monitoring`, `architecture`, `datasets`, `ml-models`: reserved platform areas for upcoming phases.
 
 ## Tech Stack
 
@@ -19,42 +30,42 @@ The platform is organized as a monorepo with independently deployable applicatio
 | --- | --- |
 | Frontend | React, Vite, TypeScript, Tailwind CSS, React Router, Axios |
 | Backend | FastAPI, Python 3.11, Uvicorn, Pydantic, SQLAlchemy |
+| Streaming | Apache Kafka, Zookeeper, Kafka UI, Python telemetry services |
+| Processing | Apache Spark 3.5, PySpark, Structured Streaming, Spark Kafka connector |
 | Infrastructure | Docker, Docker Compose |
-| Future Platform | Kafka, Spark Structured Streaming, PostgreSQL, Elasticsearch, Redis, ML services, observability stack |
+| Future Platform | PostgreSQL, Elasticsearch, Redis, ML services, observability stack, CI/CD, cloud deployment |
 
 ## Folder Structure
 
 ```text
 streaming-analytics-system/
-├── frontend/
-├── backend/
-├── kafka-producers/
-├── spark-jobs/
-├── ml-models/
-├── infrastructure/
-├── monitoring/
-├── datasets/
-├── docs/
-├── architecture/
-├── .env.example
-├── .gitignore
-├── docker-compose.yml
-├── README.md
-└── LICENSE
+  frontend/
+  backend/
+  kafka-producers/
+  spark-jobs/
+  ml-models/
+  infrastructure/
+  monitoring/
+  datasets/
+  docs/
+  architecture/
+  .env.example
+  .gitignore
+  docker-compose.yml
+  README.md
+  LICENSE
 ```
 
 ## Local Setup
 
-### Prerequisites
+Prerequisites:
 
 - Docker Desktop
 - Node.js 20+
 - Python 3.11+
 - Git
 
-### Environment Configuration
-
-Create local environment files from the examples:
+Create local environment files from examples when developing outside Compose:
 
 ```bash
 cp .env.example .env
@@ -64,39 +75,40 @@ cp frontend/.env.example frontend/.env
 
 ## Docker Development
 
-Start the full Phase 1 development environment:
+Start the full stack:
 
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 
-Services:
+Verify containers:
 
-- Frontend: `http://localhost:5173`
-- Backend API: `http://localhost:8000`
-- API health check: `http://localhost:8000/api/v1/health`
-- OpenAPI docs: `http://localhost:8000/docs`
-- Kafka UI: `http://localhost:8080`
+```bash
+docker ps --filter "name=streaming-analytics"
+```
 
-The Compose setup mounts source directories for hot reload and runs application and streaming services on a shared Docker network.
+Service endpoints:
+
+| Service | URL |
+| --- | --- |
+| Frontend | `http://localhost:5173` |
+| Backend API | `http://localhost:8000` |
+| Backend health | `http://localhost:8000/api/v1/health` |
+| OpenAPI docs | `http://localhost:8000/docs` |
+| Kafka UI | `http://localhost:8080` |
+| Spark Master UI | `http://localhost:8081` |
+| Spark Worker UI | `http://localhost:8082` |
+| Spark Driver UI | `http://localhost:4040` |
 
 ## Kafka Streaming Foundation
 
-Phase 2 adds a local Kafka telemetry pipeline:
+Phase 2 provides the Kafka telemetry backbone:
 
 ```text
 Synthetic Event Generator -> Kafka Producer -> Kafka Topics -> Kafka Consumer -> Validated Telemetry
 ```
 
-Kafka services:
-
-- `streaming-analytics-zookeeper`
-- `streaming-analytics-kafka`
-- `streaming-analytics-kafka-ui`
-- `streaming-analytics-producer`
-- `streaming-analytics-consumer`
-
-Topics:
+Telemetry topics:
 
 - `telemetry.login.events`
 - `telemetry.api.events`
@@ -104,16 +116,47 @@ Topics:
 - `telemetry.anomaly.events`
 - `telemetry.deadletter.events`
 
-Verification commands:
+Kafka verification:
 
 ```bash
-docker ps
 docker logs streaming-analytics-producer --tail 100
 docker logs streaming-analytics-consumer --tail 100
 docker exec streaming-analytics-kafka kafka-topics --bootstrap-server localhost:9092 --list
 ```
 
 Detailed Phase 2 documentation is available in `docs/phase-2-kafka-streaming.md`.
+
+## Spark Structured Streaming
+
+Phase 3 provides real-time distributed analytics processing:
+
+```text
+telemetry.* Kafka topics
+    -> Spark Structured Streaming
+    -> event normalization
+    -> risk enrichment
+    -> event-time window metrics
+    -> streaming feature engineering
+    -> analytics.* Kafka topics
+```
+
+Analytics output topics:
+
+- `analytics.enriched.events`
+- `analytics.window.metrics`
+- `analytics.risk.metrics`
+- `analytics.feature.engineering`
+
+Spark verification:
+
+```bash
+docker logs streaming-analytics-spark-streaming --tail 200
+docker exec streaming-analytics-kafka kafka-console-consumer --bootstrap-server localhost:9092 --topic analytics.enriched.events --from-beginning --max-messages 3 --timeout-ms 30000
+```
+
+Windowed aggregate topics are event-time and watermark based, so they can take a few minutes to emit after startup. Enriched events should appear first.
+
+Detailed Phase 3 documentation is available in `docs/phase-3-spark-streaming.md`.
 
 ## Backend Development
 
@@ -135,26 +178,28 @@ npm install
 npm run dev
 ```
 
-The frontend includes a professional dashboard shell, responsive sidebar layout, top navigation, typed API client, environment configuration, and a scalable folder structure for future product modules.
+The frontend includes a responsive dashboard shell, sidebar navigation, typed API client, environment configuration, and modular folder organization for future analytics modules.
 
 ## Development Workflow
 
 1. Create a feature branch from `main`.
-2. Keep backend changes inside versioned API, schema, service, and data-access boundaries.
+2. Keep backend changes inside API, schema, service, and data-access boundaries.
 3. Keep frontend changes modular by colocating reusable UI in `components`, page surfaces in `pages`, and integration code in `api` or `services`.
-4. Run services through Docker Compose for integration checks.
-5. Add documentation or architecture notes when introducing new subsystems.
+4. Keep streaming code organized by schemas, producers, consumers, transformations, aggregations, sinks, and configuration.
+5. Run integration checks through Docker Compose before pushing changes.
+6. Update docs when introducing or changing platform subsystems.
 
 ## Phase Roadmap
 
 - Phase 1: Monorepo foundation, FastAPI shell, React shell, Docker development workflow.
 - Phase 2: Kafka broker, topic initialization, synthetic telemetry producer, validating consumer, dead-letter support.
-- Phase 3: PostgreSQL, Redis, persistent domain models, migrations, service contracts.
-- Phase 4: Spark Structured Streaming jobs and batch replay strategy.
+- Phase 3: Spark Structured Streaming ingestion, transformations, window metrics, feature engineering, and analytics Kafka sinks.
+- Phase 4: PostgreSQL, Redis, persistent domain models, migrations, and service contracts.
 - Phase 5: ML anomaly detection service and model lifecycle foundations.
 - Phase 6: Elasticsearch indexing, analytics APIs, and dashboard modules.
 - Phase 7: Monitoring, alerting, tracing, CI/CD, and cloud deployment.
 
 ## Current Scope
 
-Phase 2 implements Kafka streaming infrastructure only. Spark, ML pipelines, dashboard integration, and production data stores remain future phases.
+The implemented platform currently covers the enterprise foundation, Kafka streaming infrastructure, and Spark Structured Streaming analytics pipeline. ML models, database storage, Elasticsearch, dashboard visualizations, and Kubernetes are intentionally reserved for later phases.
+

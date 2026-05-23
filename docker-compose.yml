@@ -65,6 +65,10 @@ services:
         kafka-topics --bootstrap-server streaming-analytics-kafka:29092 --create --if-not-exists --topic telemetry.network.events --partitions 3 --replication-factor 1
         kafka-topics --bootstrap-server streaming-analytics-kafka:29092 --create --if-not-exists --topic telemetry.anomaly.events --partitions 2 --replication-factor 1
         kafka-topics --bootstrap-server streaming-analytics-kafka:29092 --create --if-not-exists --topic telemetry.deadletter.events --partitions 1 --replication-factor 1
+        kafka-topics --bootstrap-server streaming-analytics-kafka:29092 --create --if-not-exists --topic analytics.enriched.events --partitions 3 --replication-factor 1
+        kafka-topics --bootstrap-server streaming-analytics-kafka:29092 --create --if-not-exists --topic analytics.window.metrics --partitions 2 --replication-factor 1
+        kafka-topics --bootstrap-server streaming-analytics-kafka:29092 --create --if-not-exists --topic analytics.risk.metrics --partitions 2 --replication-factor 1
+        kafka-topics --bootstrap-server streaming-analytics-kafka:29092 --create --if-not-exists --topic analytics.feature.engineering --partitions 2 --replication-factor 1
         kafka-topics --bootstrap-server streaming-analytics-kafka:29092 --list
     networks:
       - streaming-analytics-network
@@ -161,6 +165,57 @@ services:
     networks:
       - streaming-analytics-network
 
+  spark-master:
+    container_name: streaming-analytics-spark-master
+    image: apache/spark:3.5.3
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master", "--host", "0.0.0.0", "--port", "7077", "--webui-port", "8080"]
+    ports:
+      - "7077:7077"
+      - "8081:8080"
+    networks:
+      - streaming-analytics-network
+
+  spark-worker:
+    container_name: streaming-analytics-spark-worker
+    image: apache/spark:3.5.3
+    depends_on:
+      - spark-master
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://streaming-analytics-spark-master:7077", "--cores", "2", "--memory", "2G", "--webui-port", "8081"]
+    ports:
+      - "8082:8081"
+    networks:
+      - streaming-analytics-network
+
+  spark-streaming:
+    container_name: streaming-analytics-spark-streaming
+    build:
+      context: ./spark-jobs
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env.example
+    environment:
+      SPARK_KAFKA_BOOTSTRAP_SERVERS: streaming-analytics-kafka:29092
+      SPARK_CHECKPOINT_ROOT: /opt/spark/checkpoints
+      SPARK_STARTING_OFFSETS: latest
+      SPARK_MAX_OFFSETS_PER_TRIGGER: 5000
+      SPARK_TRIGGER_PROCESSING_TIME: 15 seconds
+      SPARK_WATERMARK_DELAY: 2 minutes
+      SPARK_LOG_LEVEL: WARN
+    ports:
+      - "4040:4040"
+    volumes:
+      - spark_checkpoints:/opt/spark/checkpoints
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      spark-master:
+        condition: service_started
+      spark-worker:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - streaming-analytics-network
+
 networks:
   streaming-analytics-network:
     name: streaming-analytics-network
@@ -175,3 +230,5 @@ volumes:
     name: streaming-analytics-zookeeper-data
   zookeeper_log:
     name: streaming-analytics-zookeeper-log
+  spark_checkpoints:
+    name: streaming-analytics-spark-checkpoints
