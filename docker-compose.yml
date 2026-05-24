@@ -89,6 +89,61 @@ services:
     networks:
       - streaming-analytics-network
 
+  postgres:
+    container_name: streaming-analytics-postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: streaming_analytics
+      POSTGRES_USER: streaming_user
+      POSTGRES_PASSWORD: streaming_password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U streaming_user -d streaming_analytics"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - streaming-analytics-network
+
+  redis:
+    container_name: streaming-analytics-redis
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - redis_data:/data
+    networks:
+      - streaming-analytics-network
+
+  elasticsearch:
+    container_name: streaming-analytics-elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      cluster.routing.allocation.disk.threshold_enabled: "false"
+    ports:
+      - "9200:9200"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9200/_cluster/health >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - streaming-analytics-network
+
   backend:
     container_name: streaming-analytics-backend
     build:
@@ -99,11 +154,17 @@ services:
     environment:
       ENVIRONMENT: development
       BACKEND_CORS_ORIGINS: http://localhost:5173,http://localhost:3000
+      DATABASE_URL: postgresql+psycopg://streaming_user:streaming_password@streaming-analytics-postgres:5432/streaming_analytics
+      ELASTICSEARCH_HOST: http://streaming-analytics-elasticsearch:9200
+      REDIS_URL: redis://streaming-analytics-redis:6379/0
     ports:
       - "8000:8000"
     volumes:
       - ./backend/app:/app/app
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - streaming-analytics-network
 
@@ -247,6 +308,38 @@ services:
     networks:
       - streaming-analytics-network
 
+  storage-sink:
+    container_name: streaming-analytics-storage-sink
+    build:
+      context: ./storage-sink
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env.example
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: streaming-analytics-kafka:29092
+      STORAGE_SINK_CONSUMER_GROUP: streaming-analytics-storage-sink
+      STORAGE_SINK_LOG_LEVEL: INFO
+      POSTGRES_HOST: streaming-analytics-postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: streaming_analytics
+      POSTGRES_USER: streaming_user
+      POSTGRES_PASSWORD: streaming_password
+      REDIS_HOST: streaming-analytics-redis
+      REDIS_PORT: 6379
+      ELASTICSEARCH_HOST: http://streaming-analytics-elasticsearch:9200
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - streaming-analytics-network
+
 networks:
   streaming-analytics-network:
     name: streaming-analytics-network
@@ -263,3 +356,9 @@ volumes:
     name: streaming-analytics-zookeeper-log
   spark_checkpoints:
     name: streaming-analytics-spark-checkpoints
+  postgres_data:
+    name: streaming-analytics-postgres-data
+  redis_data:
+    name: streaming-analytics-redis-data
+  elasticsearch_data:
+    name: streaming-analytics-elasticsearch-data

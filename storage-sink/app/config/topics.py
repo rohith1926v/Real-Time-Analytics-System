@@ -1,0 +1,23 @@
+TELEMETRY_LOGIN_EVENTS = "telemetry.login.events"
+TELEMETRY_API_EVENTS = "telemetry.api.events"
+TELEMETRY_NETWORK_EVENTS = "telemetry.network.events"
+TELEMETRY_ANOMALY_EVENTS = "telemetry.anomaly.events"
+ANALYTICS_ENRICHED_EVENTS = "analytics.enriched.events"
+ANALYTICS_WINDOW_METRICS = "analytics.window.metrics"
+ANALYTICS_RISK_METRICS = "analytics.risk.metrics"
+ANALYTICS_FEATURE_ENGINEERING = "analytics.feature.engineering"
+ML_ANOMALY_PREDICTIONS = "ml.anomaly.predictions"
+TELEMETRY_DEADLETTER_EVENTS = "telemetry.deadletter.events"
+
+STORAGE_INPUT_TOPICS = (
+    TELEMETRY_LOGIN_EVENTS,
+    TELEMETRY_API_EVENTS,
+    TELEMETRY_NETWORK_EVENTS,
+    TELEMETRY_ANOMALY_EVENTS,
+    ANALYTICS_ENRICHED_EVENTS,
+    ANALYTICS_WINDOW_METRICS,
+    ANALYTICS_RISK_METRICS,
+    ANALYTICS_FEATURE_ENGINEERING,
+    ML_ANOMALY_PREDICTIONS,
+)
+

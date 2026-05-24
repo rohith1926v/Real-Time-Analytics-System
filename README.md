@@ -14,7 +14,9 @@ Synthetic Telemetry Generator
     -> analytics Kafka topics
     -> ML anomaly detection
     -> prediction Kafka topics
-    -> future APIs, storage, search, and dashboards
+    -> PostgreSQL, Elasticsearch, and Redis
+    -> FastAPI query APIs
+    -> future dashboard integration
 ```
 
 Current platform components:
@@ -24,6 +26,7 @@ Current platform components:
 - `kafka-producers`: Synthetic telemetry producer and validating Kafka consumer.
 - `spark-jobs`: Spark Structured Streaming analytics pipeline.
 - `ml-models`: Isolation Forest training pipeline and real-time ML inference worker.
+- `storage-sink`: Kafka persistence worker for PostgreSQL, Elasticsearch, and Redis.
 - `docs`: Phase documentation and operational runbooks.
 - `infrastructure`, `monitoring`, `architecture`, `datasets`, `ml-models`: reserved platform areas for upcoming phases.
 
@@ -36,6 +39,7 @@ Current platform components:
 | Streaming | Apache Kafka, Zookeeper, Kafka UI, Python telemetry services |
 | Processing | Apache Spark 3.5, PySpark, Structured Streaming, Spark Kafka connector |
 | ML | scikit-learn, pandas, NumPy, joblib, Pydantic |
+| Persistence/Search | PostgreSQL, Elasticsearch, Redis, SQLAlchemy |
 | Infrastructure | Docker, Docker Compose |
 | Future Platform | PostgreSQL, Elasticsearch, Redis, observability stack, CI/CD, cloud deployment |
 
@@ -48,6 +52,7 @@ streaming-analytics-system/
   kafka-producers/
   spark-jobs/
   ml-models/
+  storage-sink/
   infrastructure/
   monitoring/
   datasets/
@@ -195,6 +200,36 @@ docker exec streaming-analytics-kafka kafka-console-consumer --bootstrap-server 
 
 Detailed Phase 4 documentation is available in `docs/phase-4-ml-anomaly-detection.md`.
 
+## Database, Search, And Cache
+
+Phase 5 persists and queries the streaming platform with local free services:
+
+```text
+Kafka topics
+    -> storage sink consumer
+    -> PostgreSQL structured tables
+    -> Elasticsearch searchable indexes
+    -> Redis latest-value and counter cache
+    -> FastAPI query APIs
+```
+
+Local services:
+
+- PostgreSQL: `localhost:5432`
+- Redis: `localhost:6379`
+- Elasticsearch: `http://localhost:9200`
+
+Query APIs:
+
+- `GET /api/v1/analytics/summary`
+- `GET /api/v1/events/recent`
+- `GET /api/v1/predictions/recent`
+- `GET /api/v1/predictions/{entity_id}`
+- `GET /api/v1/risks/high`
+- `GET /api/v1/search/events?q=login`
+
+Detailed Phase 5 documentation is available in `docs/phase-5-database-search.md`.
+
 ## Backend Development
 
 ```bash
@@ -232,7 +267,7 @@ The frontend includes a responsive dashboard shell, sidebar navigation, typed AP
 - Phase 2: Kafka broker, topic initialization, synthetic telemetry producer, validating consumer, dead-letter support.
 - Phase 3: Spark Structured Streaming ingestion, transformations, window metrics, feature engineering, and analytics Kafka sinks.
 - Phase 4: ML anomaly detection training pipeline, streaming inference worker, and prediction Kafka topic.
-- Phase 5: PostgreSQL, Redis, persistent domain models, migrations, and service contracts.
+- Phase 5: Local PostgreSQL, Elasticsearch, Redis, storage sink persistence, and FastAPI query APIs.
 - Phase 6: Elasticsearch indexing, analytics APIs, and dashboard modules.
 - Phase 7: Monitoring, alerting, tracing, CI/CD, and cloud deployment.
 
