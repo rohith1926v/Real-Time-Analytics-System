@@ -6,4 +6,4 @@ confluent-kafka==2.5.3
 elasticsearch==8.17.0
 redis==5.2.1
 python-dotenv==1.0.1
-
+prometheus-client==0.21.1

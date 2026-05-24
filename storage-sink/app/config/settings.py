@@ -18,6 +18,7 @@ class StorageSinkSettings(BaseSettings):
     redis_host: str = Field(default="localhost", validation_alias="REDIS_HOST")
     redis_port: int = Field(default=6379, validation_alias="REDIS_PORT")
     elasticsearch_host: str = Field(default="http://localhost:9200", validation_alias="ELASTICSEARCH_HOST")
+    metrics_port: int = Field(default=9102, validation_alias="STORAGE_SINK_METRICS_PORT")
 
     consumer_client_id: str = "streaming-analytics-storage-sink"
 
@@ -42,4 +43,3 @@ class StorageSinkSettings(BaseSettings):
 @lru_cache
 def get_settings() -> StorageSinkSettings:
     return StorageSinkSettings()
-

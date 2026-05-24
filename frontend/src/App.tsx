@@ -5,6 +5,7 @@ import { AlertsPage } from "./pages/AlertsPage";
 import { IncidentsPage } from "./pages/IncidentsPage";
 import { LiveStreamPage } from "./pages/LiveStreamPage";
 import { MLPredictionsPage } from "./pages/MLPredictionsPage";
+import { ObservabilityPage } from "./pages/ObservabilityPage";
 import { OverviewPage } from "./pages/OverviewPage";
 import { RiskAnalyticsPage } from "./pages/RiskAnalyticsPage";
 import { SearchPage } from "./pages/SearchPage";
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="health" element={<SystemHealthPage />} />
         <Route path="alerts" element={<AlertsPage />} />
         <Route path="incidents" element={<IncidentsPage />} />
+        <Route path="observability" element={<ObservabilityPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

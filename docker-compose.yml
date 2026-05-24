@@ -200,6 +200,8 @@ services:
       EVENT_RATE_PER_SECOND: 5
       ANOMALY_RATE: 0.05
       PRODUCER_LOG_LEVEL: INFO
+    ports:
+      - "9104:9104"
     command: python -m app.main producer
     depends_on:
       kafka-init:
@@ -219,6 +221,8 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: streaming-analytics-kafka:29092
       KAFKA_CONSUMER_GROUP: streaming-analytics-telemetry-consumers
       CONSUMER_LOG_LEVEL: INFO
+    ports:
+      - "9105:9105"
     command: python -m app.main consumer
     depends_on:
       kafka-init:
@@ -296,6 +300,8 @@ services:
       ML_AUTO_BOOTSTRAP_MODEL: "true"
       ML_TRAINING_SAMPLE_SIZE: 12000
       ML_CONTAMINATION: 0.06
+    ports:
+      - "9101:9101"
     command: python -m app.main inference
     volumes:
       - ./ml-models/artifacts:/app/artifacts
@@ -327,6 +333,8 @@ services:
       REDIS_HOST: streaming-analytics-redis
       REDIS_PORT: 6379
       ELASTICSEARCH_HOST: http://streaming-analytics-elasticsearch:9200
+    ports:
+      - "9102:9102"
     depends_on:
       kafka-init:
         condition: service_completed_successfully
@@ -361,6 +369,8 @@ services:
       ELASTICSEARCH_HOST: http://streaming-analytics-elasticsearch:9200
       ALERT_DEDUP_COOLDOWN_SECONDS: 120
       INCIDENT_CORRELATION_WINDOW_SECONDS: 900
+    ports:
+      - "9103:9103"
     depends_on:
       kafka-init:
         condition: service_completed_successfully
@@ -373,6 +383,44 @@ services:
       ml-inference:
         condition: service_started
     restart: unless-stopped
+    networks:
+      - streaming-analytics-network
+
+  prometheus:
+    container_name: streaming-analytics-prometheus
+    image: prom/prometheus:v2.55.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=7d
+      - --web.enable-lifecycle
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    depends_on:
+      - backend
+      - ml-inference
+      - storage-sink
+      - alert-engine
+    networks:
+      - streaming-analytics-network
+
+  grafana:
+    container_name: streaming-analytics-grafana
+    image: grafana/grafana:11.3.0
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
     networks:
       - streaming-analytics-network
 
@@ -398,3 +446,7 @@ volumes:
     name: streaming-analytics-redis-data
   elasticsearch_data:
     name: streaming-analytics-elasticsearch-data
+  prometheus_data:
+    name: streaming-analytics-prometheus-data
+  grafana_data:
+    name: streaming-analytics-grafana-data

@@ -28,11 +28,18 @@ The backend is the FastAPI service layer for the Real-Time Streaming Analytics S
 - `PATCH /api/v1/alerts/{alert_id}/status`
 - `PATCH /api/v1/incidents/{incident_id}/status`
 - `WS /api/v1/ws/alerts`
+- `GET /api/v1/monitoring/overview`
+- `GET /api/v1/monitoring/services`
+- `GET /api/v1/monitoring/pipeline`
+- `GET /api/v1/monitoring/errors`
+- `GET /api/v1/monitoring/metrics-summary`
+- `GET /metrics`
 
 ## Data Sources
 
 - PostgreSQL stores structured telemetry, metrics, features, predictions, and dead letters.
 - Elasticsearch backs search queries and is optional-safe.
+- Prometheus backs monitoring summaries when available.
 - Existing health endpoint remains available at `GET /api/v1/health`.
 
 ## Local Development
@@ -46,4 +53,5 @@ When running through Docker Compose, the backend uses:
 ```text
 DATABASE_URL=postgresql+psycopg://streaming_user:streaming_password@streaming-analytics-postgres:5432/streaming_analytics
 ELASTICSEARCH_HOST=http://streaming-analytics-elasticsearch:9200
+PROMETHEUS_URL=http://streaming-analytics-prometheus:9090
 ```

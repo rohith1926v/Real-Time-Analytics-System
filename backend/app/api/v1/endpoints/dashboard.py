@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
 
 from app.db.session import SessionLocal, get_db
+from app.core.metrics import ACTIVE_WEBSOCKET_CONNECTIONS, DASHBOARD_WEBSOCKET_MESSAGES_TOTAL
 from app.schemas.dashboard import ChartPoint, DashboardLiveMessage, DashboardOverviewResponse, EntityRiskPoint, SystemHealthResponse
 from app.services.analytics_query_service import AnalyticsQueryService
 
@@ -52,6 +53,7 @@ def dashboard_top_entities(db: Annotated[Session, Depends(get_db)], limit: int =
 @router.websocket("/ws/dashboard")
 async def dashboard_websocket(websocket: WebSocket) -> None:
     await websocket.accept()
+    ACTIVE_WEBSOCKET_CONNECTIONS.labels("dashboard").inc()
     logger.info(
         "dashboard_websocket_connected client=%s origin=%s",
         websocket.client.host if websocket.client else "unknown",
@@ -61,6 +63,7 @@ async def dashboard_websocket(websocket: WebSocket) -> None:
         while True:
             message = _build_live_dashboard_message()
             await websocket.send_json(message.model_dump(mode="json"))
+            DASHBOARD_WEBSOCKET_MESSAGES_TOTAL.inc()
             await asyncio.sleep(3)
     except WebSocketDisconnect:
         logger.info("dashboard_websocket_disconnected reason=client_disconnect")
@@ -68,6 +71,8 @@ async def dashboard_websocket(websocket: WebSocket) -> None:
     except Exception:
         logger.exception("dashboard_websocket_disconnected reason=unexpected_error")
         raise
+    finally:
+        ACTIVE_WEBSOCKET_CONNECTIONS.labels("dashboard").dec()
 
 
 def _build_live_dashboard_message() -> DashboardLiveMessage:

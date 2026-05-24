@@ -9,6 +9,7 @@ from pydantic import ValidationError
 from app.config.settings import KafkaRuntimeSettings
 from app.config.topics import CONSUMER_TOPICS
 from app.schemas.events import DeadLetterEvent, parse_telemetry_event
+from app.utils.metrics import CONSUMER_ERRORS_TOTAL, EVENTS_CONSUMED_TOTAL
 from app.utils.retry import retry_with_backoff
 
 logger = logging.getLogger(__name__)
@@ -84,8 +85,10 @@ class TelemetryConsumer:
                 topic,
                 event.risk_score,
             )
+            EVENTS_CONSUMED_TOTAL.labels(topic, event.event_type).inc()
         except (ValidationError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
             logger.warning("Malformed telemetry message topic=%s reason=%s", topic, exc)
+            CONSUMER_ERRORS_TOTAL.labels(topic).inc()
             self._publish_deadletter(topic, str(exc), payload)
 
     def _publish_deadletter(self, source_topic: str, reason: str, payload: bytes) -> None:

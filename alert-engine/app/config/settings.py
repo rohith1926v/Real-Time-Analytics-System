@@ -18,6 +18,7 @@ class AlertEngineSettings(BaseSettings):
     elasticsearch_host: str = Field(default="http://localhost:9200", validation_alias="ELASTICSEARCH_HOST")
     dedup_cooldown_seconds: int = Field(default=120, validation_alias="ALERT_DEDUP_COOLDOWN_SECONDS")
     incident_window_seconds: int = Field(default=900, validation_alias="INCIDENT_CORRELATION_WINDOW_SECONDS")
+    metrics_port: int = Field(default=9103, validation_alias="ALERT_ENGINE_METRICS_PORT")
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=False, extra="ignore")
 
@@ -40,4 +41,3 @@ class AlertEngineSettings(BaseSettings):
 @lru_cache
 def get_settings() -> AlertEngineSettings:
     return AlertEngineSettings()
-

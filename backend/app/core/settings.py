@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     database_url: str = "sqlite+pysqlite:///./analytics.db"
     elasticsearch_host: str = "http://localhost:9200"
     redis_url: str = "redis://localhost:6379/0"
+    prometheus_url: str = "http://localhost:9090"
+    grafana_url: str = "http://localhost:3000"
 
     model_config = SettingsConfigDict(
         env_file=".env",

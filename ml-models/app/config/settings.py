@@ -19,6 +19,7 @@ class MLSettings(BaseSettings):
     auto_bootstrap_model: bool = Field(default=True, validation_alias="ML_AUTO_BOOTSTRAP_MODEL")
     training_sample_size: int = Field(default=12000, ge=1000, validation_alias="ML_TRAINING_SAMPLE_SIZE")
     contamination: float = Field(default=0.06, ge=0.001, le=0.5, validation_alias="ML_CONTAMINATION")
+    metrics_port: int = Field(default=9101, validation_alias="ML_METRICS_PORT")
 
     producer_client_id: str = Field(default="streaming-analytics-ml-prediction-producer")
     consumer_client_id: str = Field(default="streaming-analytics-ml-inference-consumer")

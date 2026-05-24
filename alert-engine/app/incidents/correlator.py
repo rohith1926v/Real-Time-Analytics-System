@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.config.settings import AlertEngineSettings
 from app.db.models import Incident, IncidentAlertLink
 from app.schemas.alerts import AlertEvent
+from app.utils.metrics import INCIDENTS_CREATED_TOTAL
 
 SEVERITY_RANK = {"info": 0, "low": 1, "medium": 2, "high": 3, "critical": 4}
 
@@ -39,6 +40,7 @@ class IncidentCorrelator:
                 raw_payload={"correlation_id": alert.correlation_id, "timeline": [alert.model_dump(mode="json")]},
             )
             session.add(incident)
+            INCIDENTS_CREATED_TOTAL.inc()
         else:
             related_alerts = list(incident.related_alerts or [])
             entity_ids = list(incident.entity_ids or [])
@@ -69,4 +71,3 @@ class IncidentCorrelator:
         if severity == "high" and count >= 3:
             return "critical"
         return severity
-

@@ -5,6 +5,7 @@ from app.config.settings import get_settings
 from app.consumers.telemetry_consumer import TelemetryConsumer
 from app.producers.telemetry_producer import TelemetryProducer
 from app.utils.logging import configure_logging
+from app.utils.metrics import start_metrics_server
 
 
 def parse_args() -> argparse.Namespace:
@@ -20,6 +21,7 @@ def main() -> None:
     configure_logging(log_level)
 
     logger = logging.getLogger(__name__)
+    start_metrics_server(settings.producer_metrics_port if args.mode == "producer" else settings.consumer_metrics_port)
     logger.info("Starting Kafka telemetry runtime mode=%s", args.mode)
 
     if args.mode == "producer":

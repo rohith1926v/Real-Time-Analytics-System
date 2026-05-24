@@ -4,6 +4,7 @@ import redis
 
 from app.config.settings import AlertEngineSettings
 from app.schemas.alerts import AlertEvent
+from app.utils.metrics import ALERT_DEDUPLICATIONS_TOTAL
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,7 @@ class AlertDeduplicator:
             if count == 1:
                 self._client.expire(key, self._settings.dedup_cooldown_seconds)
                 return True
+            ALERT_DEDUPLICATIONS_TOTAL.inc()
             logger.info("alert_deduplicated key=%s count=%s", key, count)
             return False
         except Exception as exc:
@@ -50,4 +52,3 @@ class AlertDeduplicator:
                 self._client.ltrim("live:critical-alerts", 0, 50)
         except Exception as exc:
             logger.warning("redis_alert_cache_failed reason=%s", exc)
-

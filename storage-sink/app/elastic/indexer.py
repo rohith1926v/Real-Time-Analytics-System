@@ -4,6 +4,7 @@ from elasticsearch import Elasticsearch
 
 from app.config.settings import StorageSinkSettings
 from app.schemas.records import StorageRecord
+from app.utils.metrics import ELASTICSEARCH_INDEX_ERRORS_TOTAL
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +34,7 @@ class ElasticsearchIndexer:
         try:
             self._client.index(index=self._index_for_record(record), document=self._document(record))
         except Exception as exc:
+            ELASTICSEARCH_INDEX_ERRORS_TOTAL.inc()
             logger.warning("elasticsearch_index_failed action=continue_postgres reason=%s", exc)
 
     @staticmethod
@@ -76,4 +78,3 @@ class ElasticsearchIndexer:
                 "raw_payload": {"type": "object", "enabled": True},
             }
         }
-

@@ -7,6 +7,7 @@ from app.inference.predictor import AnomalyPredictor
 from app.models.artifact_store import artifacts_exist, load_artifacts
 from app.training.train_model import train_and_save
 from app.utils.logging import configure_logging
+from app.utils.metrics import ML_MODEL_LOADED_STATUS, start_metrics_server
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,7 @@ def main() -> None:
     args = parse_args()
     settings = get_settings()
     configure_logging(settings.inference_log_level)
+    start_metrics_server(settings.metrics_port)
     logger.info("starting_ml_runtime mode=%s", args.mode)
 
     if args.mode == "train":
@@ -44,6 +46,7 @@ def main() -> None:
 
     ensure_model_artifacts()
     artifacts = load_artifacts(settings.artifact_dir)
+    ML_MODEL_LOADED_STATUS.set(1)
     logger.info(
         "model_artifacts_loaded model_name=%s model_version=%s features=%s",
         artifacts.metadata.get("model_name"),
@@ -56,4 +59,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

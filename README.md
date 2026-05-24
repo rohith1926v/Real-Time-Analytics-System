@@ -1,6 +1,6 @@
 # Real-Time Streaming Analytics System
 
-An enterprise-grade streaming analytics platform foundation for cybersecurity and operational telemetry. The system now includes a React analytics console, FastAPI service layer, Kafka telemetry streaming infrastructure, and a Spark Structured Streaming analytics engine.
+An enterprise-grade streaming analytics platform foundation for cybersecurity and operational telemetry. The system now includes a React analytics console, FastAPI service layer, Kafka telemetry streaming infrastructure, Spark Structured Streaming analytics engine, ML anomaly detection, SOC alerting, local persistence, and a free local observability stack.
 
 This repository is structured as a production-oriented monorepo with clear service boundaries, environment-driven configuration, Dockerized local workflows, typed frontend code, modular backend services, resilient Kafka producers and consumers, and Spark jobs organized for maintainable distributed processing.
 
@@ -18,6 +18,7 @@ Synthetic Telemetry Generator
     -> Alert engine and incident intelligence
     -> FastAPI query APIs
     -> React real-time enterprise dashboard
+    -> Prometheus and Grafana observability
 ```
 
 Current platform components:
@@ -29,6 +30,7 @@ Current platform components:
 - `ml-models`: Isolation Forest training pipeline and real-time ML inference worker.
 - `storage-sink`: Kafka persistence worker for PostgreSQL, Elasticsearch, and Redis.
 - `alert-engine`: Real-time SOC alert generation, deduplication, and incident correlation.
+- `monitoring`: Prometheus configuration and provisioned Grafana dashboards.
 - `docs`: Phase documentation and operational runbooks.
 - `infrastructure`, `monitoring`, `architecture`, `datasets`, `ml-models`: reserved platform areas for upcoming phases.
 
@@ -44,7 +46,8 @@ Current platform components:
 | Persistence/Search | PostgreSQL, Elasticsearch, Redis, SQLAlchemy |
 | Dashboard | React, TypeScript, Tailwind CSS, Recharts, WebSocket API |
 | Infrastructure | Docker, Docker Compose |
-| Future Platform | PostgreSQL, Elasticsearch, Redis, observability stack, CI/CD, cloud deployment |
+| Observability | Prometheus, Grafana, Python prometheus-client |
+| Future Platform | CI/CD, cloud deployment, Kubernetes, authentication/RBAC |
 
 ## Folder Structure
 
@@ -111,6 +114,10 @@ Service endpoints:
 | Spark Master UI | `http://localhost:8081` |
 | Spark Worker UI | `http://localhost:8082` |
 | Spark Driver UI | `http://localhost:4040` |
+| Prometheus | `http://localhost:9090` |
+| Grafana | `http://localhost:3000` |
+
+Grafana default login is `admin / admin`.
 
 ## Kafka Streaming Foundation
 
@@ -307,6 +314,61 @@ Screenshots:
 
 Detailed Phase 7 documentation is available in `docs/phase-7-alert-engine.md`.
 
+## Observability, Monitoring, And System Health
+
+Phase 8 adds local Prometheus and Grafana monitoring for the platform:
+
+```text
+Service metrics endpoints
+    -> Prometheus scrape targets
+    -> provisioned Grafana dashboards
+    -> FastAPI monitoring APIs
+    -> React observability page
+```
+
+Metrics endpoints:
+
+- Backend: `http://localhost:8000/metrics`
+- ML inference: `http://localhost:9101/metrics`
+- Storage sink: `http://localhost:9102/metrics`
+- Alert engine: `http://localhost:9103/metrics`
+- Telemetry producer: `http://localhost:9104/metrics`
+- Telemetry consumer: `http://localhost:9105/metrics`
+
+Monitoring APIs:
+
+- `GET /api/v1/monitoring/overview`
+- `GET /api/v1/monitoring/services`
+- `GET /api/v1/monitoring/pipeline`
+- `GET /api/v1/monitoring/errors`
+- `GET /api/v1/monitoring/metrics-summary`
+
+Dashboard route:
+
+- `/observability`
+
+Provisioned Grafana dashboards:
+
+- System Overview
+- Streaming Pipeline
+- ML Inference
+- SOC Alert Engine
+
+Verification:
+
+```bash
+docker compose up --build -d
+docker ps --filter "name=streaming-analytics"
+```
+
+Open:
+
+- `http://localhost:9090/targets`
+- `http://localhost:3000`
+- `http://localhost:5173/observability`
+
+Detailed Phase 8 documentation is available in `docs/phase-8-observability-monitoring.md`.
+
 ## Backend Development
 
 ```bash
@@ -347,8 +409,9 @@ The frontend includes a responsive dashboard shell, sidebar navigation, typed AP
 - Phase 5: Local PostgreSQL, Elasticsearch, Redis, storage sink persistence, and FastAPI query APIs.
 - Phase 6: Enterprise real-time React dashboard, dashboard APIs, charts, tables, search, and WebSocket updates.
 - Phase 7: Real-time alert engine, incident intelligence, deduplication, SOC APIs, and dashboard integration.
-- Phase 8: Monitoring, tracing, CI/CD, and cloud deployment.
+- Phase 8: Local/free Prometheus metrics, Grafana dashboards, monitoring APIs, and observability UI.
+- Future: Tracing, CI/CD, cloud deployment, Kubernetes, authentication/RBAC.
 
 ## Current Scope
 
-The implemented platform currently covers the enterprise foundation, Kafka streaming infrastructure, Spark Structured Streaming analytics pipeline, ML anomaly detection inference, local persistence/search/cache, dashboard visualization, and SOC alert/incident intelligence. MLflow, Kubernetes, external alert delivery, authentication/RBAC, and cloud deployment are intentionally reserved for later phases.
+The implemented platform currently covers the enterprise foundation, Kafka streaming infrastructure, Spark Structured Streaming analytics pipeline, ML anomaly detection inference, local persistence/search/cache, dashboard visualization, SOC alert/incident intelligence, and local observability. MLflow, Kubernetes, external alert delivery, authentication/RBAC, distributed tracing, and cloud deployment are intentionally reserved for later phases.

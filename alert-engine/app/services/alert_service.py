@@ -7,6 +7,7 @@ from app.elastic.indexer import AlertIndexer
 from app.incidents.correlator import IncidentCorrelator
 from app.repositories.alert_repository import AlertRepository
 from app.rules.rule_engine import AlertRulesEngine
+from app.utils.metrics import ALERTS_GENERATED_TOTAL, CRITICAL_ALERTS_TOTAL
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +39,9 @@ class AlertProcessingService:
             self._deduplicator.update_live_caches(alert)
             self._indexer.index_alert(alert)
             emitted += 1
+            ALERTS_GENERATED_TOTAL.labels(alert.severity).inc()
+            if alert.severity == "critical":
+                CRITICAL_ALERTS_TOTAL.inc()
             logger.info(
                 "alert_generated alert_id=%s severity=%s entity_id=%s incident_id=%s",
                 alert.alert_id,
@@ -46,4 +50,3 @@ class AlertProcessingService:
                 incident_id,
             )
         return emitted
-

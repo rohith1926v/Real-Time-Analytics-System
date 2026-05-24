@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, WebSocket, WebSock
 from sqlalchemy.orm import Session
 
 from app.db.session import SessionLocal, get_db
+from app.core.metrics import ACTIVE_WEBSOCKET_CONNECTIONS, ALERT_WEBSOCKET_MESSAGES_TOTAL
 from app.schemas.alerts import AlertResponse, AlertStatsResponse, IncidentResponse, StatusUpdateRequest
 from app.services.alert_service import AlertQueryService
 
@@ -76,12 +77,15 @@ def update_incident_status(incident_id: str, request: StatusUpdateRequest, db: A
 @router.websocket("/ws/alerts")
 async def alerts_websocket(websocket: WebSocket) -> None:
     await websocket.accept()
+    ACTIVE_WEBSOCKET_CONNECTIONS.labels("alerts").inc()
     logger.info("alerts_websocket_connected client=%s", websocket.client.host if websocket.client else "unknown")
     try:
         while True:
             with SessionLocal() as db:
                 await websocket.send_json(service.live_message(db))
+                ALERT_WEBSOCKET_MESSAGES_TOTAL.inc()
             await asyncio.sleep(3)
     except WebSocketDisconnect:
         logger.info("alerts_websocket_disconnected reason=client_disconnect")
-
+    finally:
+        ACTIVE_WEBSOCKET_CONNECTIONS.labels("alerts").dec()

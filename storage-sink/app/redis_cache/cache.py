@@ -5,6 +5,7 @@ import redis
 
 from app.config.settings import StorageSinkSettings
 from app.schemas.records import StorageRecord
+from app.utils.metrics import REDIS_CACHE_ERRORS_TOTAL
 
 logger = logging.getLogger(__name__)
 
@@ -37,5 +38,5 @@ class RedisCache:
                 key = f"recent:high-risk:{record.entity_id or record.event_id or record.prediction_id or 'unknown'}"
                 self._client.set(key, json.dumps(record.raw_payload, default=str), ex=3600)
         except Exception as exc:
+            REDIS_CACHE_ERRORS_TOTAL.inc()
             logger.warning("redis_cache_update_failed action=continue reason=%s", exc)
-

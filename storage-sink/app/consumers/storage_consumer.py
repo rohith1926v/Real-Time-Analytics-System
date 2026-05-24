@@ -13,6 +13,7 @@ from app.redis_cache.cache import RedisCache
 from app.repositories.postgres_repository import PostgresStorageRepository
 from app.services.record_mapper import map_payload_to_record
 from app.utils.retry import retry_with_backoff
+from app.utils.metrics import POSTGRES_WRITE_ERRORS_TOTAL, RECORDS_PERSISTED_TOTAL
 
 logger = logging.getLogger(__name__)
 
@@ -79,9 +80,14 @@ class StorageSinkConsumer:
                 {"source_topic": topic, "reason": str(exc), "payload": payload.decode("utf-8", errors="replace") if payload else None},
             )
 
-        with self._session_factory() as session:
-            self._repository.persist(session, record)
-            session.commit()
+        try:
+            with self._session_factory() as session:
+                self._repository.persist(session, record)
+                session.commit()
+            RECORDS_PERSISTED_TOTAL.labels(record.record_kind).inc()
+        except Exception:
+            POSTGRES_WRITE_ERRORS_TOTAL.inc()
+            raise
 
         self._indexer.index(record)
         self._cache.update(record)
@@ -100,4 +106,3 @@ class StorageSinkConsumer:
 
         signal.signal(signal.SIGTERM, shutdown_handler)
         signal.signal(signal.SIGINT, shutdown_handler)
-

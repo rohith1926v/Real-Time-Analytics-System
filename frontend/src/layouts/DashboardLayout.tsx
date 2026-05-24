@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { Activity, BarChart3, Bell, BrainCircuit, FolderKanban, LayoutDashboard, Radio, Search, Server, Siren } from "lucide-react";
+import { Activity, BarChart3, Bell, BrainCircuit, FolderKanban, Gauge, LayoutDashboard, Radio, Search, Server, Siren } from "lucide-react";
 
 const navigationItems = [
   { label: "Overview", href: "/", icon: LayoutDashboard },
@@ -10,6 +10,7 @@ const navigationItems = [
   { label: "Incidents", href: "/incidents", icon: FolderKanban },
   { label: "Search", href: "/search", icon: Search },
   { label: "System Health", href: "/health", icon: Server },
+  { label: "Observability", href: "/observability", icon: Gauge },
 ];
 
 export function DashboardLayout() {
@@ -49,7 +50,7 @@ export function DashboardLayout() {
         <header className="sticky top-0 z-20 border-b border-white/10 bg-surface-950/88 px-4 py-4 backdrop-blur md:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-xs font-medium uppercase text-slate-500">Phase 6 Enterprise Dashboard</p>
+              <p className="text-xs font-medium uppercase text-slate-500">Enterprise Streaming Analytics Platform</p>
               <h1 className="mt-1 text-xl font-semibold text-white">Real-Time AI Analytics Interface</h1>
             </div>
             <div className="flex items-center gap-3">

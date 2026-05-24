@@ -15,6 +15,8 @@ class KafkaRuntimeSettings(BaseSettings):
     producer_client_id: str = Field(default="streaming-analytics-producer")
     consumer_client_id: str = Field(default="streaming-analytics-consumer")
     deadletter_topic: str = Field(default="telemetry.deadletter.events")
+    producer_metrics_port: int = Field(default=9104, validation_alias="PRODUCER_METRICS_PORT")
+    consumer_metrics_port: int = Field(default=9105, validation_alias="CONSUMER_METRICS_PORT")
     runtime_mode: Literal["producer", "consumer"] | None = None
 
     model_config = SettingsConfigDict(

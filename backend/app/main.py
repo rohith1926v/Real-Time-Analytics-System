@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import api_router
 from app.core.logging import configure_logging
+from app.core.metrics import PrometheusMetricsMiddleware, metrics_response
 from app.core.settings import settings
 from app.db.session import initialize_database
 
@@ -26,6 +27,9 @@ def create_application() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    application.add_middleware(PrometheusMetricsMiddleware)
+
+    application.add_api_route("/metrics", metrics_response, methods=["GET"], include_in_schema=False)
 
     application.include_router(api_router, prefix=settings.api_v1_prefix)
 

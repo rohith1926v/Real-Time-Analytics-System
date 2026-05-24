@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 import signal
+import time
 from types import FrameType
 from typing import Any
 
@@ -15,6 +16,7 @@ from app.features.feature_mapper import FeatureMapper
 from app.inference.predictor import AnomalyPredictor
 from app.schemas.prediction import DeadLetterEvent
 from app.utils.retry import retry_with_backoff
+from app.utils.metrics import ML_ANOMALIES_TOTAL, ML_INFERENCE_LATENCY_SECONDS, ML_PREDICTION_ERRORS_TOTAL, ML_PREDICTIONS_TOTAL
 
 logger = logging.getLogger(__name__)
 
@@ -89,6 +91,7 @@ class MLInferenceConsumer:
             return
 
         try:
+            start = time.perf_counter()
             parsed_payload = json.loads(payload.decode("utf-8"))
             features = self._feature_mapper.to_feature_vector(parsed_payload)
             prediction = self._predictor.predict(
@@ -98,6 +101,10 @@ class MLInferenceConsumer:
                 entity_id=self._feature_mapper.entity_id(parsed_payload),
             )
             self._publish_prediction(prediction)
+            ML_PREDICTIONS_TOTAL.inc()
+            if prediction.is_anomaly:
+                ML_ANOMALIES_TOTAL.inc()
+            ML_INFERENCE_LATENCY_SECONDS.observe(time.perf_counter() - start)
             logger.info(
                 "prediction_published prediction_id=%s entity_id=%s anomaly=%s risk=%s severity=%s source_topic=%s",
                 prediction.prediction_id,
@@ -108,6 +115,7 @@ class MLInferenceConsumer:
                 topic,
             )
         except (UnicodeDecodeError, json.JSONDecodeError, ValidationError, ValueError, TypeError) as exc:
+            ML_PREDICTION_ERRORS_TOTAL.inc()
             logger.warning("unprocessable_ml_message topic=%s reason=%s", topic, exc)
             self._publish_deadletter(topic, str(exc), self._decode_payload(payload))
 
@@ -151,4 +159,3 @@ class MLInferenceConsumer:
 
         signal.signal(signal.SIGTERM, shutdown_handler)
         signal.signal(signal.SIGINT, shutdown_handler)
-

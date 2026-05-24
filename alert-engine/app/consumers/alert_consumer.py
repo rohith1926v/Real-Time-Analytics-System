@@ -10,6 +10,7 @@ from app.config.settings import AlertEngineSettings
 from app.config.topics import ALERT_INPUT_TOPICS
 from app.services.alert_service import AlertProcessingService
 from app.utils.retry import retry_with_backoff
+from app.utils.metrics import ALERT_ENGINE_ERRORS_TOTAL
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +66,7 @@ class AlertEngineConsumer:
             if count:
                 logger.info("alerts_persisted count=%s source_topic=%s", count, topic)
         except Exception:
+            ALERT_ENGINE_ERRORS_TOTAL.inc()
             logger.exception("alert_engine_message_failed topic=%s", topic)
 
     def _register_shutdown_handlers(self) -> None:
@@ -74,4 +76,3 @@ class AlertEngineConsumer:
 
         signal.signal(signal.SIGTERM, shutdown_handler)
         signal.signal(signal.SIGINT, shutdown_handler)
-

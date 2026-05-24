@@ -2,9 +2,15 @@ import { CheckCircle2, CircleAlert } from "lucide-react";
 
 import { useAsyncData } from "../hooks/useAsyncData";
 import { dashboardService } from "../services/dashboardService";
+import { monitoringService } from "../services/monitoringService";
 
 export function SystemHealthPage() {
   const health = useAsyncData(dashboardService.systemHealth, [], 10_000);
+  const monitoringServices = useAsyncData(monitoringService.services, [], 10_000);
+  const components =
+    monitoringServices.data?.length
+      ? monitoringServices.data.map((service) => ({ name: service.name, status: service.status, detail: service.detail }))
+      : health.data?.components ?? [];
 
   return (
     <div className="space-y-6">
@@ -14,8 +20,8 @@ export function SystemHealthPage() {
         <p className="mt-2 text-sm text-slate-400">Local service health for the free Docker Compose analytics platform.</p>
       </section>
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {(health.data?.components ?? []).map((component) => {
-          const ok = ["online", "active", "observing"].includes(component.status);
+        {components.map((component) => {
+          const ok = ["healthy", "online", "active", "observing"].includes(component.status);
           return (
             <article key={component.name} className="rounded-lg border border-white/10 bg-surface-900 p-5 shadow-panel">
               <div className="flex items-start justify-between gap-3">
@@ -33,4 +39,3 @@ export function SystemHealthPage() {
     </div>
   );
 }
-
