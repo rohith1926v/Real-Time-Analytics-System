@@ -6,8 +6,11 @@ Thumbs.db
 .env
 *.env
 !.env.example
-backend/.env
-frontend/.env
+**/.env
+**/.env.local
+**/.env.development.local
+**/.env.production.local
+!**/.env.example
 
 # Python
 __pycache__/
@@ -17,6 +20,7 @@ __pycache__/
 venv/
 env/
 .pytest_cache/
+.hypothesis/
 .ruff_cache/
 .mypy_cache/
 htmlcov/
@@ -43,7 +47,18 @@ frontend/.vite/
 
 # Docker
 *.pid
+.docker/
+docker-data/
+volumes/
 
 # Logs
 logs/
 *.log
+
+# Generated artifacts
+ml-models/artifacts/*.joblib
+ml-models/artifacts/*.pkl
+ml-models/artifacts/*.parquet
+ml-models/artifacts/training_metrics.json
+*.tmp
+*.bak

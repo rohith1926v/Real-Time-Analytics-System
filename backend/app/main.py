@@ -1,11 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.api.v1.router import api_router
 from app.core.logging import configure_logging
 from app.core.metrics import PrometheusMetricsMiddleware, metrics_response
 from app.core.settings import settings
 from app.db.session import initialize_database
+from app.middleware.security import LocalRateLimitMiddleware, SecurityHeadersMiddleware
 
 
 def create_application() -> FastAPI:
@@ -14,10 +16,24 @@ def create_application() -> FastAPI:
     application = FastAPI(
         title=settings.project_name,
         version=settings.app_version,
-        description="Foundation API for the Real-Time Streaming Analytics Platform.",
+        summary="Local AI-powered SOC/XDR streaming analytics API",
+        description=(
+            "Production-style local FastAPI service for telemetry analytics, ML predictions, "
+            "SOC alerting, incident intelligence, threat intelligence, monitoring, and dashboard APIs."
+        ),
         docs_url="/docs",
         redoc_url="/redoc",
         openapi_url=f"{settings.api_v1_prefix}/openapi.json",
+        contact={"name": "Streaming Analytics Platform Engineering"},
+        license_info={"name": "MIT"},
+        openapi_tags=[
+            {"name": "health", "description": "Platform liveness and readiness checks."},
+            {"name": "analytics", "description": "Stored telemetry, predictions, risk, and search APIs."},
+            {"name": "dashboard", "description": "Real-time dashboard APIs and WebSocket streams."},
+            {"name": "alerts", "description": "SOC alerts, incidents, status updates, and live alert streams."},
+            {"name": "monitoring", "description": "Prometheus-backed monitoring and service health summaries."},
+            {"name": "threat-intelligence", "description": "IOC enrichment, MITRE mapping, detection rules, entity intelligence, and attack timelines."},
+        ],
     )
 
     application.add_middleware(
@@ -27,11 +43,20 @@ def create_application() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    application.add_middleware(SecurityHeadersMiddleware)
+    application.add_middleware(LocalRateLimitMiddleware)
     application.add_middleware(PrometheusMetricsMiddleware)
 
     application.add_api_route("/metrics", metrics_response, methods=["GET"], include_in_schema=False)
 
     application.include_router(api_router, prefix=settings.api_v1_prefix)
+
+    @application.exception_handler(Exception)
+    async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Internal server error", "path": request.url.path},
+        )
 
     @application.on_event("startup")
     def initialize_local_database() -> None:
