@@ -14,7 +14,14 @@ function dashboardWebSocketUrl() {
   return url.toString();
 }
 
+function alertsWebSocketUrl() {
+  const configured = import.meta.env.VITE_ALERTS_WS_URL;
+  if (configured) return configured;
+  return dashboardWebSocketUrl().replace("/ws/dashboard", "/ws/alerts");
+}
+
 export const config = {
   apiBaseUrl,
   dashboardWebSocketUrl: dashboardWebSocketUrl(),
+  alertsWebSocketUrl: alertsWebSocketUrl(),
 };

@@ -15,6 +15,7 @@ Synthetic Telemetry Generator
     -> ML anomaly detection
     -> prediction Kafka topics
     -> PostgreSQL, Elasticsearch, and Redis
+    -> Alert engine and incident intelligence
     -> FastAPI query APIs
     -> React real-time enterprise dashboard
 ```
@@ -27,6 +28,7 @@ Current platform components:
 - `spark-jobs`: Spark Structured Streaming analytics pipeline.
 - `ml-models`: Isolation Forest training pipeline and real-time ML inference worker.
 - `storage-sink`: Kafka persistence worker for PostgreSQL, Elasticsearch, and Redis.
+- `alert-engine`: Real-time SOC alert generation, deduplication, and incident correlation.
 - `docs`: Phase documentation and operational runbooks.
 - `infrastructure`, `monitoring`, `architecture`, `datasets`, `ml-models`: reserved platform areas for upcoming phases.
 
@@ -268,6 +270,43 @@ Screenshots:
 
 Detailed Phase 6 documentation is available in `docs/phase-6-enterprise-dashboard.md`.
 
+## Real-Time Alert Engine And Incident Intelligence
+
+Phase 7 adds a local SOC-style alert and incident layer:
+
+```text
+ML predictions + Spark analytics
+    -> alert rules
+    -> Redis deduplication
+    -> incident correlation
+    -> PostgreSQL + Elasticsearch
+    -> FastAPI APIs + WebSocket
+    -> Alerts and Incidents dashboard pages
+```
+
+Alert APIs:
+
+- `GET /api/v1/alerts/recent`
+- `GET /api/v1/alerts/high`
+- `GET /api/v1/alerts/critical`
+- `GET /api/v1/incidents/recent`
+- `GET /api/v1/incidents/open`
+- `GET /api/v1/alerts/stats`
+- `GET /api/v1/alerts/search?q=...`
+- `WS /api/v1/ws/alerts`
+
+Dashboard routes:
+
+- `/alerts`
+- `/incidents`
+
+Screenshots:
+
+- Add alerts page screenshot after alert-engine has consumed live ML predictions.
+- Add incidents page screenshot after correlated incidents are created.
+
+Detailed Phase 7 documentation is available in `docs/phase-7-alert-engine.md`.
+
 ## Backend Development
 
 ```bash
@@ -307,8 +346,9 @@ The frontend includes a responsive dashboard shell, sidebar navigation, typed AP
 - Phase 4: ML anomaly detection training pipeline, streaming inference worker, and prediction Kafka topic.
 - Phase 5: Local PostgreSQL, Elasticsearch, Redis, storage sink persistence, and FastAPI query APIs.
 - Phase 6: Enterprise real-time React dashboard, dashboard APIs, charts, tables, search, and WebSocket updates.
-- Phase 7: Monitoring, alerting, tracing, CI/CD, and cloud deployment.
+- Phase 7: Real-time alert engine, incident intelligence, deduplication, SOC APIs, and dashboard integration.
+- Phase 8: Monitoring, tracing, CI/CD, and cloud deployment.
 
 ## Current Scope
 
-The implemented platform currently covers the enterprise foundation, Kafka streaming infrastructure, Spark Structured Streaming analytics pipeline, and ML anomaly detection inference. Database storage, Elasticsearch, dashboard ML visualizations, MLflow, and Kubernetes are intentionally reserved for later phases.
+The implemented platform currently covers the enterprise foundation, Kafka streaming infrastructure, Spark Structured Streaming analytics pipeline, ML anomaly detection inference, local persistence/search/cache, dashboard visualization, and SOC alert/incident intelligence. MLflow, Kubernetes, external alert delivery, authentication/RBAC, and cloud deployment are intentionally reserved for later phases.

@@ -1,0 +1,10 @@
+ML_ANOMALY_PREDICTIONS = "ml.anomaly.predictions"
+ANALYTICS_RISK_METRICS = "analytics.risk.metrics"
+ANALYTICS_ENRICHED_EVENTS = "analytics.enriched.events"
+
+ALERT_INPUT_TOPICS = (
+    ML_ANOMALY_PREDICTIONS,
+    ANALYTICS_RISK_METRICS,
+    ANALYTICS_ENRICHED_EVENTS,
+)
+

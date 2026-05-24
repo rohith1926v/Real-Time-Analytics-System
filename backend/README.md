@@ -17,6 +17,17 @@ The backend is the FastAPI service layer for the Real-Time Streaming Analytics S
 - `GET /api/v1/dashboard/severity-distribution`
 - `GET /api/v1/dashboard/top-entities`
 - `WS /api/v1/ws/dashboard`
+- `GET /api/v1/alerts/recent`
+- `GET /api/v1/alerts/high`
+- `GET /api/v1/alerts/critical`
+- `GET /api/v1/incidents/recent`
+- `GET /api/v1/incidents/{incident_id}`
+- `GET /api/v1/incidents/open`
+- `GET /api/v1/alerts/stats`
+- `GET /api/v1/alerts/search?q=...`
+- `PATCH /api/v1/alerts/{alert_id}/status`
+- `PATCH /api/v1/incidents/{incident_id}/status`
+- `WS /api/v1/ws/alerts`
 
 ## Data Sources
 

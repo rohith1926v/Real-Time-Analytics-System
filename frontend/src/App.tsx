@@ -1,6 +1,8 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import { DashboardLayout } from "./layouts/DashboardLayout";
+import { AlertsPage } from "./pages/AlertsPage";
+import { IncidentsPage } from "./pages/IncidentsPage";
 import { LiveStreamPage } from "./pages/LiveStreamPage";
 import { MLPredictionsPage } from "./pages/MLPredictionsPage";
 import { OverviewPage } from "./pages/OverviewPage";
@@ -18,6 +20,8 @@ export default function App() {
         <Route path="predictions" element={<MLPredictionsPage />} />
         <Route path="search" element={<SearchPage />} />
         <Route path="health" element={<SystemHealthPage />} />
+        <Route path="alerts" element={<AlertsPage />} />
+        <Route path="incidents" element={<IncidentsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

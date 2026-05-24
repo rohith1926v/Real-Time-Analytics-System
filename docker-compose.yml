@@ -340,6 +340,42 @@ services:
     networks:
       - streaming-analytics-network
 
+  alert-engine:
+    container_name: streaming-analytics-alert-engine
+    build:
+      context: ./alert-engine
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env.example
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: streaming-analytics-kafka:29092
+      ALERT_ENGINE_CONSUMER_GROUP: streaming-analytics-alert-engine
+      ALERT_ENGINE_LOG_LEVEL: INFO
+      POSTGRES_HOST: streaming-analytics-postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: streaming_analytics
+      POSTGRES_USER: streaming_user
+      POSTGRES_PASSWORD: streaming_password
+      REDIS_HOST: streaming-analytics-redis
+      REDIS_PORT: 6379
+      ELASTICSEARCH_HOST: http://streaming-analytics-elasticsearch:9200
+      ALERT_DEDUP_COOLDOWN_SECONDS: 120
+      INCIDENT_CORRELATION_WINDOW_SECONDS: 900
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_started
+      ml-inference:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - streaming-analytics-network
+
 networks:
   streaming-analytics-network:
     name: streaming-analytics-network

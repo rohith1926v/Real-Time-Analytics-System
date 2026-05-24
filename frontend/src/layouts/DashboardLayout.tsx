@@ -1,11 +1,13 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { Activity, BarChart3, Bell, BrainCircuit, LayoutDashboard, Radio, Search, Server } from "lucide-react";
+import { Activity, BarChart3, Bell, BrainCircuit, FolderKanban, LayoutDashboard, Radio, Search, Server, Siren } from "lucide-react";
 
 const navigationItems = [
   { label: "Overview", href: "/", icon: LayoutDashboard },
   { label: "Live Stream", href: "/live", icon: Radio },
   { label: "Risk Analytics", href: "/risk", icon: BarChart3 },
   { label: "ML Predictions", href: "/predictions", icon: BrainCircuit },
+  { label: "Alerts", href: "/alerts", icon: Siren },
+  { label: "Incidents", href: "/incidents", icon: FolderKanban },
   { label: "Search", href: "/search", icon: Search },
   { label: "System Health", href: "/health", icon: Server },
 ];
