@@ -12,7 +12,9 @@ Synthetic Telemetry Generator
     -> Spark Structured Streaming
     -> real-time transformations and window aggregations
     -> analytics Kafka topics
-    -> future APIs, storage, ML, search, and dashboards
+    -> ML anomaly detection
+    -> prediction Kafka topics
+    -> future APIs, storage, search, and dashboards
 ```
 
 Current platform components:
@@ -21,6 +23,7 @@ Current platform components:
 - `backend`: FastAPI application with versioned APIs, settings management, CORS, logging, and health checks.
 - `kafka-producers`: Synthetic telemetry producer and validating Kafka consumer.
 - `spark-jobs`: Spark Structured Streaming analytics pipeline.
+- `ml-models`: Isolation Forest training pipeline and real-time ML inference worker.
 - `docs`: Phase documentation and operational runbooks.
 - `infrastructure`, `monitoring`, `architecture`, `datasets`, `ml-models`: reserved platform areas for upcoming phases.
 
@@ -32,8 +35,9 @@ Current platform components:
 | Backend | FastAPI, Python 3.11, Uvicorn, Pydantic, SQLAlchemy |
 | Streaming | Apache Kafka, Zookeeper, Kafka UI, Python telemetry services |
 | Processing | Apache Spark 3.5, PySpark, Structured Streaming, Spark Kafka connector |
+| ML | scikit-learn, pandas, NumPy, joblib, Pydantic |
 | Infrastructure | Docker, Docker Compose |
-| Future Platform | PostgreSQL, Elasticsearch, Redis, ML services, observability stack, CI/CD, cloud deployment |
+| Future Platform | PostgreSQL, Elasticsearch, Redis, observability stack, CI/CD, cloud deployment |
 
 ## Folder Structure
 
@@ -158,6 +162,39 @@ Windowed aggregate topics are event-time and watermark based, so they can take a
 
 Detailed Phase 3 documentation is available in `docs/phase-3-spark-streaming.md`.
 
+## ML Anomaly Detection
+
+Phase 4 adds real-time ML inference over Spark analytics streams:
+
+```text
+analytics.* Kafka topics
+    -> ML feature parser
+    -> Isolation Forest model
+    -> anomaly scoring and severity classification
+    -> ml.anomaly.predictions
+```
+
+Train model artifacts manually:
+
+```bash
+docker compose run --rm ml-inference python -m app.training.train_model
+```
+
+Run inference:
+
+```bash
+docker compose up --build -d ml-inference
+docker logs -f streaming-analytics-ml-inference
+```
+
+Sample predictions:
+
+```bash
+docker exec streaming-analytics-kafka kafka-console-consumer --bootstrap-server localhost:9092 --topic ml.anomaly.predictions --from-beginning --max-messages 3 --timeout-ms 30000
+```
+
+Detailed Phase 4 documentation is available in `docs/phase-4-ml-anomaly-detection.md`.
+
 ## Backend Development
 
 ```bash
@@ -194,12 +231,11 @@ The frontend includes a responsive dashboard shell, sidebar navigation, typed AP
 - Phase 1: Monorepo foundation, FastAPI shell, React shell, Docker development workflow.
 - Phase 2: Kafka broker, topic initialization, synthetic telemetry producer, validating consumer, dead-letter support.
 - Phase 3: Spark Structured Streaming ingestion, transformations, window metrics, feature engineering, and analytics Kafka sinks.
-- Phase 4: PostgreSQL, Redis, persistent domain models, migrations, and service contracts.
-- Phase 5: ML anomaly detection service and model lifecycle foundations.
+- Phase 4: ML anomaly detection training pipeline, streaming inference worker, and prediction Kafka topic.
+- Phase 5: PostgreSQL, Redis, persistent domain models, migrations, and service contracts.
 - Phase 6: Elasticsearch indexing, analytics APIs, and dashboard modules.
 - Phase 7: Monitoring, alerting, tracing, CI/CD, and cloud deployment.
 
 ## Current Scope
 
-The implemented platform currently covers the enterprise foundation, Kafka streaming infrastructure, and Spark Structured Streaming analytics pipeline. ML models, database storage, Elasticsearch, dashboard visualizations, and Kubernetes are intentionally reserved for later phases.
-
+The implemented platform currently covers the enterprise foundation, Kafka streaming infrastructure, Spark Structured Streaming analytics pipeline, and ML anomaly detection inference. Database storage, Elasticsearch, dashboard ML visualizations, MLflow, and Kubernetes are intentionally reserved for later phases.

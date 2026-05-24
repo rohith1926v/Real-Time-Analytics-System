@@ -1,0 +1,36 @@
+FEATURE_COLUMNS = [
+    "failed_login_rate",
+    "requests_per_minute",
+    "avg_api_response_time",
+    "endpoint_error_rate",
+    "suspicious_ip_frequency",
+    "avg_network_bytes",
+    "anomaly_rate",
+    "risk_score_moving_average",
+    "geo_login_variance",
+    "high_risk_event_count",
+    "failed_auth_count",
+    "api_5xx_rate",
+    "network_bytes_spike_score",
+    "unique_ip_count",
+    "session_activity_score",
+]
+
+FEATURE_DEFAULTS = {
+    "failed_login_rate": 0.0,
+    "requests_per_minute": 0.0,
+    "avg_api_response_time": 0.0,
+    "endpoint_error_rate": 0.0,
+    "suspicious_ip_frequency": 0.0,
+    "avg_network_bytes": 0.0,
+    "anomaly_rate": 0.0,
+    "risk_score_moving_average": 0.0,
+    "geo_login_variance": 0.0,
+    "high_risk_event_count": 0.0,
+    "failed_auth_count": 0.0,
+    "api_5xx_rate": 0.0,
+    "network_bytes_spike_score": 0.0,
+    "unique_ip_count": 1.0,
+    "session_activity_score": 0.0,
+}
+

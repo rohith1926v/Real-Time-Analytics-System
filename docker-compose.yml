@@ -69,6 +69,7 @@ services:
         kafka-topics --bootstrap-server streaming-analytics-kafka:29092 --create --if-not-exists --topic analytics.window.metrics --partitions 2 --replication-factor 1
         kafka-topics --bootstrap-server streaming-analytics-kafka:29092 --create --if-not-exists --topic analytics.risk.metrics --partitions 2 --replication-factor 1
         kafka-topics --bootstrap-server streaming-analytics-kafka:29092 --create --if-not-exists --topic analytics.feature.engineering --partitions 2 --replication-factor 1
+        kafka-topics --bootstrap-server streaming-analytics-kafka:29092 --create --if-not-exists --topic ml.anomaly.predictions --partitions 3 --replication-factor 1
         kafka-topics --bootstrap-server streaming-analytics-kafka:29092 --list
     networks:
       - streaming-analytics-network
@@ -211,6 +212,36 @@ services:
       spark-master:
         condition: service_started
       spark-worker:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - streaming-analytics-network
+
+  ml-inference:
+    container_name: streaming-analytics-ml-inference
+    build:
+      context: ./ml-models
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env.example
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: streaming-analytics-kafka:29092
+      ML_CONSUMER_GROUP: streaming-analytics-ml-inference
+      ML_LOG_LEVEL: INFO
+      ML_ARTIFACT_DIR: /app/artifacts
+      ML_MODEL_NAME: isolation_forest_anomaly_detector
+      ML_MODEL_VERSION: 0.1.0
+      ML_PREDICTION_TOPIC: ml.anomaly.predictions
+      ML_AUTO_BOOTSTRAP_MODEL: "true"
+      ML_TRAINING_SAMPLE_SIZE: 12000
+      ML_CONTAMINATION: 0.06
+    command: python -m app.main inference
+    volumes:
+      - ./ml-models/artifacts:/app/artifacts
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      spark-streaming:
         condition: service_started
     restart: unless-stopped
     networks:
