@@ -1,79 +1,266 @@
-# Real-Time Streaming Analytics AI SOC/XDR Platform
+<div align="center">
 
-Production-style, fully local AI-powered SOC/XDR platform for real-time cybersecurity telemetry, streaming analytics, ML anomaly detection, alerting, threat intelligence, and enterprise dashboarding.
+# Real-Time Streaming Analytics Platform
 
-This project is built as a resume-ready engineering portfolio system. It uses only local/free/open-source infrastructure through Docker Compose.
+### AI-powered real-time SOC/XDR analytics platform for streaming telemetry, anomaly detection, threat intelligence, and incident response.
+
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React-TypeScript-61DAFB?style=for-the-badge&logo=react&logoColor=0B1220)
+![Kafka](https://img.shields.io/badge/Apache%20Kafka-Streaming-231F20?style=for-the-badge&logo=apachekafka&logoColor=white)
+![Spark](https://img.shields.io/badge/Apache%20Spark-Analytics-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Storage-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-Cache-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+![Grafana](https://img.shields.io/badge/Grafana-Dashboards-F46800?style=for-the-badge&logo=grafana&logoColor=white)
+![Prometheus](https://img.shields.io/badge/Prometheus-Metrics-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+
+</div>
+
+---
+
+## Project Overview
+
+**Real-Time Streaming Analytics Platform** is a fully local, open-source, production-style AI SOC/XDR system that processes cybersecurity telemetry in real time.
+
+The platform simulates enterprise telemetry, streams it through Kafka, enriches it with Spark Structured Streaming, applies ML-based anomaly detection, correlates incidents, maps detections to MITRE ATT&CK, enriches entities with local threat intelligence, and presents the results through a polished React dashboard and FastAPI APIs.
+
+It is designed to demonstrate practical experience across:
+
+- real-time telemetry processing
+- distributed streaming analytics
+- AI/ML anomaly detection
+- cybersecurity analytics and SOC workflows
+- threat intelligence correlation
+- observability and platform health monitoring
+- Dockerized microservices architecture
+
+Everything runs locally with free/open-source tools. No paid APIs, managed cloud services, or external SaaS dependencies are required.
+
+---
+
+## Key Features
+
+| Capability | Description |
+| --- | --- |
+| **Real-Time Telemetry Ingestion** | Generates synthetic cybersecurity, login, API, network, and anomaly telemetry. |
+| **Kafka Streaming Pipeline** | Uses Kafka topics for telemetry, analytics, ML predictions, alerts, and dead-letter handling. |
+| **Spark Streaming Analytics** | Performs structured streaming transformations, aggregations, and feature engineering. |
+| **ML Anomaly Detection** | Uses Isolation Forest inference over engineered telemetry features. |
+| **Threat Intelligence Engine** | Performs local IOC enrichment, entity profiling, threat scoring, and attack timeline construction. |
+| **MITRE ATT&CK Mapping** | Maps detections to tactics, techniques, MITRE IDs, and kill-chain stages. |
+| **Detection Engineering** | Supports Sigma-like YAML detection rules and rule hit analytics. |
+| **Incident Correlation** | Groups related alerts into incidents with severity escalation and timelines. |
+| **Real-Time Alerting** | Streams live SOC alerts and incident updates through FastAPI WebSockets. |
+| **Search + Persistence** | Stores structured records in PostgreSQL, indexes searchable data in Elasticsearch, and caches latest values in Redis. |
+| **Observability** | Exposes Prometheus metrics and Grafana dashboards for service and pipeline monitoring. |
+| **Enterprise Dashboard** | React + TypeScript dashboard for SOC analytics, threat hunting, entities, alerts, incidents, and system health. |
+| **Dockerized Microservices** | Runs as a local Docker Compose platform with full and laptop-friendly startup modes. |
+
+---
 
 ## Architecture
 
 ```mermaid
 flowchart TD
-    A["Synthetic Cybersecurity Telemetry"] --> B["Kafka"]
-    B --> C["Spark Structured Streaming"]
-    C --> D["Analytics + Feature Topics"]
-    D --> E["ML Anomaly Detection"]
-    E --> F["SOC Alert Engine"]
-    D --> G["Storage Sink"]
+    A["Telemetry Producer"] --> B["Kafka"]
+    B --> C["Spark Streaming"]
+    C --> D["ML Inference"]
+    D --> E["Threat Intelligence Engine"]
+    E --> F["Alert Engine"]
+    F --> G["PostgreSQL / Redis"]
     E --> G
-    F --> H["Threat Intelligence Engine"]
-    D --> H
-    H --> I["PostgreSQL / Elasticsearch / Redis"]
-    G --> I
-    F --> I
-    I --> J["FastAPI APIs + WebSockets"]
-    J --> K["React SOC/XDR Dashboard"]
-    J --> L["Prometheus + Grafana"]
+    C --> G
+    G --> H["FastAPI Backend"]
+    H --> I["React Dashboard"]
+    H --> J["Grafana + Prometheus"]
 ```
 
-Detailed architecture: [docs/architecture.md](docs/architecture.md)
+<details>
+<summary><strong>Detailed Data Flow</strong></summary>
 
-## Core Features
+1. Synthetic producers emit telemetry into Kafka topics.
+2. Spark Structured Streaming consumes telemetry and produces enriched analytics and feature streams.
+3. ML inference consumes analytics topics and publishes anomaly predictions.
+4. The alert engine evaluates prediction and analytics streams to create SOC alerts and incidents.
+5. The threat intelligence engine enriches activity with local IOC feeds, MITRE mappings, rule hits, and entity risk profiles.
+6. PostgreSQL, Redis, and Elasticsearch persist structured, cached, and searchable records.
+7. FastAPI exposes REST and WebSocket APIs.
+8. React visualizes dashboards, alerts, incidents, threat intelligence, MITRE coverage, entities, timelines, and observability.
+9. Prometheus and Grafana provide platform health and metrics visibility.
 
-- Kafka-based real-time telemetry streaming
-- Spark Structured Streaming transformations, window metrics, and feature engineering
-- Isolation Forest ML anomaly detection and real-time prediction publishing
-- SOC alert engine with deduplication, severity escalation, and incident correlation
-- Threat intelligence engine with IOC enrichment, local feeds, MITRE ATT&CK mapping, detection rules, entity profiles, and attack timelines
-- PostgreSQL structured persistence, Elasticsearch search, and Redis caching
-- FastAPI query APIs, WebSocket streams, OpenAPI docs, security headers, and Prometheus metrics
-- React + TypeScript enterprise SOC dashboard with live analytics, alerts, incidents, threat hunting, MITRE, entities, timelines, and observability
-- Prometheus + Grafana local monitoring
-- Developer startup scripts, health checker, tests, demo guide, and resume summary
+</details>
+
+For deeper diagrams, see [docs/architecture.md](docs/architecture.md).
+
+---
 
 ## Tech Stack
 
-| Layer | Technologies |
+### Frontend
+
+| Technology | Purpose |
 | --- | --- |
-| Frontend | React, TypeScript, Vite, Tailwind CSS, Recharts, D3, React Flow, Framer Motion |
-| Backend | FastAPI, Pydantic v2, SQLAlchemy, WebSockets |
-| Streaming | Apache Kafka, Zookeeper, Python producers/consumers |
-| Processing | Apache Spark Structured Streaming, PySpark |
-| ML | scikit-learn, pandas, NumPy, joblib, Isolation Forest |
-| Security Analytics | Alert rules, incident correlation, IOC enrichment, MITRE ATT&CK, YAML detection rules |
-| Storage/Search/Cache | PostgreSQL, Elasticsearch, Redis |
-| Observability | Prometheus, Grafana, prometheus-client |
-| Infrastructure | Docker Compose, local scripts |
+| React | Enterprise dashboard UI |
+| TypeScript | Typed frontend development |
+| Vite | Frontend build tooling |
+| Tailwind CSS | Dark SOC/XDR styling |
+| Recharts | Analytics charts |
+| D3.js | Graph and data visualization support |
+| React Flow | Attack path and relationship graph visualization |
+| Framer Motion | UI animation |
+| Axios | API client |
 
-## Screenshots
+### Backend
 
-Add screenshots after starting the stack:
+| Technology | Purpose |
+| --- | --- |
+| FastAPI | REST APIs, WebSockets, OpenAPI docs |
+| Pydantic v2 | API and event schema validation |
+| SQLAlchemy | Database ORM |
+| Uvicorn | ASGI runtime |
+| prometheus-client | Metrics instrumentation |
 
-- Overview dashboard
-- Alerts and incidents
-- Threat intelligence graph
-- MITRE ATT&CK matrix
-- Observability page
-- Grafana dashboard
+### Streaming
 
-## Quick Start
+| Technology | Purpose |
+| --- | --- |
+| Apache Kafka | Event streaming backbone |
+| Zookeeper | Kafka coordination |
+| Kafka UI | Local topic inspection |
+| Python Kafka clients | Producers, consumers, sink workers |
 
-Prerequisites:
+### AI/ML
+
+| Technology | Purpose |
+| --- | --- |
+| scikit-learn | Isolation Forest anomaly detection |
+| pandas / NumPy | Synthetic training data and feature processing |
+| joblib | Model artifact persistence |
+| Pydantic | Prediction event contracts |
+
+### Databases
+
+| Technology | Purpose |
+| --- | --- |
+| PostgreSQL | Structured telemetry, predictions, alerts, incidents, threat intelligence |
+| Elasticsearch | Searchable telemetry, alerts, IOC matches, entity profiles |
+| Redis | Latest-value cache, counters, deduplication, IOC cache |
+
+### Observability
+
+| Technology | Purpose |
+| --- | --- |
+| Prometheus | Metrics scraping |
+| Grafana | Dashboards |
+| Health checker scripts | Local platform validation |
+
+### DevOps
+
+| Technology | Purpose |
+| --- | --- |
+| Docker Compose | Local microservices orchestration |
+| PowerShell / Bash scripts | Startup, shutdown, verification |
+| pytest | Backend, ML, alert, and threat-intel test scaffolding |
+
+---
+
+## Dashboard Screenshots
+
+Create a `screenshots/` folder and place images using the filenames below.
+
+### Main Dashboard
+
+![Dashboard](./screenshots/dashboard.png)
+
+### Threat Intelligence Dashboard
+
+![Threat Intelligence Dashboard](./screenshots/threat-intelligence.png)
+
+### MITRE ATT&CK Dashboard
+
+![MITRE ATTACK Dashboard](./screenshots/mitre-attack.png)
+
+### Incident Correlation Dashboard
+
+![Incident Correlation Dashboard](./screenshots/incidents.png)
+
+### Real-Time Alerts Dashboard
+
+![Real-Time Alerts Dashboard](./screenshots/alerts.png)
+
+### FastAPI Swagger Docs
+
+![FastAPI Swagger Docs](./screenshots/swagger-docs.png)
+
+---
+
+## API
+
+The backend is powered by **FastAPI** and exposes production-style REST and WebSocket APIs.
+
+| API Surface | URL |
+| --- | --- |
+| Backend API | `http://localhost:8000` |
+| Swagger Docs | `http://localhost:8000/docs` |
+| OpenAPI JSON | `http://localhost:8000/api/v1/openapi.json` |
+| Health Check | `http://localhost:8000/api/v1/health` |
+| Prometheus Metrics | `http://localhost:8000/metrics` |
+
+Example endpoint groups:
+
+- `/api/v1/dashboard/*`
+- `/api/v1/events/*`
+- `/api/v1/predictions/*`
+- `/api/v1/alerts/*`
+- `/api/v1/incidents/*`
+- `/api/v1/threat-intel/*`
+- `/api/v1/detections/*`
+- `/api/v1/entities/*`
+- `/api/v1/mitre/*`
+- `/api/v1/monitoring/*`
+- `/api/v1/ws/dashboard`
+- `/api/v1/ws/alerts`
+- `/api/v1/ws/threat-intel`
+
+---
+
+## Local Setup
+
+### Prerequisites
 
 - Docker Desktop
-- Node.js 20+
 - Python 3.11+
+- Node.js 20+
+- Git
 
-Laptop-friendly mode:
+### 1. Clone The Repository
+
+```bash
+git clone <your-repository-url>
+cd streaming-analytics-system
+```
+
+### 2. Environment Setup
+
+The project includes safe example environment files:
+
+```text
+.env.example
+backend/.env.example
+frontend/.env.example
+ml-models/.env.example
+alert-engine/.env.example
+storage-sink/.env.example
+threat-intelligence-engine/.env.example
+```
+
+Docker Compose uses `.env.example` by default for local development.
+
+### 3. Start Laptop-Friendly Mode
+
+Windows:
 
 ```powershell
 .\scripts\start_light.ps1
@@ -85,101 +272,170 @@ Unix/macOS/Linux:
 ./scripts/start_light.sh
 ```
 
-Full mode:
+### 4. Start Full Platform
+
+Windows:
 
 ```powershell
 .\scripts\start_full.ps1
 ```
 
-Stop everything:
+Unix/macOS/Linux:
+
+```bash
+./scripts/start_full.sh
+```
+
+### 5. Verify Health
+
+```bash
+python scripts/health_check.py
+python scripts/verify_phase_10.py
+```
+
+### 6. Stop Services
+
+Windows:
 
 ```powershell
 .\scripts\stop_all.ps1
 ```
 
-## Health Check
+Unix/macOS/Linux:
 
 ```bash
-python scripts/health_check.py
-python scripts/health_check.py --json
+./scripts/stop_all.sh
 ```
 
-The checker validates backend, frontend, Kafka, PostgreSQL, Redis, Elasticsearch, Prometheus, Grafana, ML inference, storage sink, alert engine, and threat intelligence metrics.
+---
 
-## Important URLs
+## Local URLs
 
-| Surface | URL |
+| Service | URL |
 | --- | --- |
 | React Dashboard | `http://localhost:5173` |
-| FastAPI | `http://localhost:8000` |
-| OpenAPI Docs | `http://localhost:8000/docs` |
+| FastAPI Docs | `http://localhost:8000/docs` |
 | Kafka UI | `http://localhost:8080` |
 | Spark Master UI | `http://localhost:8081` |
 | Spark Driver UI | `http://localhost:4040` |
-| Elasticsearch | `http://localhost:9200/_cluster/health` |
+| Elasticsearch Health | `http://localhost:9200/_cluster/health` |
 | Prometheus | `http://localhost:9090` |
-| Grafana | `http://localhost:3000` (`admin / admin`) |
+| Grafana | `http://localhost:3000` |
 
-## Dashboard Routes
+Grafana default login:
 
-- `/`
-- `/live`
-- `/risk`
-- `/predictions`
-- `/alerts`
-- `/incidents`
-- `/threat-intelligence`
-- `/detection-engineering`
-- `/threat-hunting`
-- `/mitre-attack`
-- `/entities`
-- `/attack-timeline`
-- `/search`
-- `/health`
-- `/observability`
-
-## API Highlights
-
-- `GET /api/v1/health`
-- `GET /api/v1/dashboard/overview`
-- `GET /api/v1/alerts/recent`
-- `GET /api/v1/incidents/recent`
-- `GET /api/v1/threat-intel/overview`
-- `GET /api/v1/detections/rules`
-- `GET /api/v1/entities/high-risk`
-- `GET /api/v1/mitre/tactics`
-- `GET /api/v1/monitoring/overview`
-- `WS /api/v1/ws/dashboard`
-- `WS /api/v1/ws/alerts`
-- `WS /api/v1/ws/threat-intel`
-
-## Developer Workflow
-
-Run local verification:
-
-```powershell
-.\scripts\verify_all.ps1
+```text
+admin / admin
 ```
 
-Manual checks:
+---
 
-```bash
-python -m compileall backend/app ml-models/app alert-engine/app storage-sink/app kafka-producers/app threat-intelligence-engine/app
-cd frontend && npm run build
-docker compose config --quiet
-```
+## Observability
 
-Run tests after installing service dependencies:
+The platform includes a local monitoring stack:
 
-```bash
-pip install -r backend/requirements.txt
-pip install -r ml-models/requirements.txt
-pip install -r alert-engine/requirements.txt
-pip install -r threat-intelligence-engine/requirements.txt
-python -m pytest
-```
+- Prometheus scrapes backend, ML inference, storage sink, alert engine, telemetry producer/consumer, and threat intelligence metrics.
+- Grafana provisions local dashboards for system health, streaming pipeline, ML inference, SOC alerting, and threat intelligence.
+- FastAPI exposes monitoring APIs for dashboard integration.
+- `scripts/health_check.py` validates core service availability.
 
-## Repository Layout
+Example metrics endpoints:
+
+| Component | Metrics Endpoint |
+| --- | --- |
+| Backend | `http://localhost:8000/metrics` |
+| ML Inference | `http://localhost:9101/metrics` |
+| Storage Sink | `http://localhost:9102/metrics` |
+| Alert Engine | `http://localhost:9103/metrics` |
+| Telemetry Producer | `http://localhost:9104/metrics` |
+| Telemetry Consumer | `http://localhost:9105/metrics` |
+| Threat Intelligence | `http://localhost:9106/metrics` |
+
+---
+
+## Production Readiness
+
+This project is intentionally built with production-style architecture patterns:
+
+- Dockerized microservices
+- modular service boundaries
+- typed schemas and event contracts
+- Kafka-based streaming pipeline
+- Spark-based analytics layer
+- independent ML inference service
+- independent alert and threat intelligence engines
+- PostgreSQL persistence
+- Elasticsearch search indexes
+- Redis caching and deduplication
+- Prometheus metrics
+- Grafana dashboards
+- FastAPI OpenAPI docs
+- WebSocket live updates
+- security headers middleware
+- health validation scripts
+- light and full startup modes
+
+See [docs/production-readiness-checklist.md](docs/production-readiness-checklist.md).
+
+---
+
+## Resume Value
+
+This project demonstrates practical engineering depth across several high-value domains.
+
+### AI/ML Engineering
+
+- real-time ML inference service
+- Isolation Forest anomaly detection
+- feature engineering pipeline
+- model artifact loading and scoring
+- typed prediction events
+
+### Cybersecurity Analytics
+
+- SOC alerting workflows
+- incident correlation
+- MITRE ATT&CK mapping
+- IOC enrichment
+- threat hunting
+- entity intelligence
+- detection engineering
+
+### Distributed Systems
+
+- Kafka event-driven architecture
+- Spark Structured Streaming
+- multi-service Docker Compose platform
+- stream processing and sink consumers
+- fault-tolerant local development workflows
+
+### MLOps + Observability
+
+- Prometheus metrics
+- Grafana dashboards
+- health checks
+- service-level instrumentation
+- production-readiness documentation
+
+More resume-ready wording is available in [docs/resume-summary.md](docs/resume-summary.md).
+
+---
+
+## Documentation
+
+| Document | Description |
+| --- | --- |
+| [Architecture](docs/architecture.md) | Full platform architecture and data-flow diagrams |
+| [Demo Guide](docs/demo-guide.md) | Recruiter/demo walkthrough |
+| [Resume Summary](docs/resume-summary.md) | Resume bullets, LinkedIn copy, GitHub summary |
+| [Production Readiness](docs/production-readiness-checklist.md) | Production hardening checklist |
+| [Troubleshooting](docs/troubleshooting.md) | Common local setup issues |
+| [Phase 9 Threat Intelligence](docs/phase-9-threat-intelligence.md) | Threat intelligence implementation notes |
+| [Phase 8 Observability](docs/phase-8-observability-monitoring.md) | Monitoring implementation notes |
+
+---
+
+## Repository Structure
 
 ```text
 backend/                      FastAPI APIs and query services
@@ -187,58 +443,35 @@ frontend/                     React TypeScript SOC/XDR dashboard
 kafka-producers/              Synthetic telemetry producer and consumer
 spark-jobs/                   Spark Structured Streaming pipeline
 ml-models/                    ML training and streaming inference
-storage-sink/                 Kafka-to-PostgreSQL/Elasticsearch/Redis persistence
+storage-sink/                 Kafka-to-database/search/cache persistence
 alert-engine/                 SOC alerting and incident correlation
 threat-intelligence-engine/   IOC enrichment, MITRE mapping, detection rules
 detections/rules/             Local YAML detection rules
 monitoring/                   Prometheus and Grafana provisioning
 scripts/                      Startup, stop, restart, verification, health checks
 docs/                         Architecture, demo, phase docs, resume material
+screenshots/                  README screenshot assets
 ```
 
-## Documentation
-
-- [Architecture](docs/architecture.md)
-- [Demo Guide](docs/demo-guide.md)
-- [Resume Summary](docs/resume-summary.md)
-- [Production Readiness Checklist](docs/production-readiness-checklist.md)
-- [Troubleshooting Guide](docs/troubleshooting.md)
-- [Phase 9 Threat Intelligence](docs/phase-9-threat-intelligence.md)
-- [Phase 8 Observability](docs/phase-8-observability-monitoring.md)
-
-## Troubleshooting
-
-If Docker commands fail with a Docker Desktop engine or named pipe error, restart Docker Desktop and retry:
-
-```bash
-docker compose config --quiet
-docker compose up --build -d
-```
-
-If dashboards are empty, let the system run for several minutes so telemetry flows through Kafka, Spark, ML inference, alerting, storage, and threat intelligence.
-
-If Elasticsearch, Prometheus, or Grafana are slow on a laptop, use light mode first:
-
-```bash
-./scripts/start_light.sh
-```
-
-## Resume Bullet
-
-Built a production-style local AI SOC/XDR streaming analytics platform with Kafka, Spark, FastAPI, React, ML anomaly detection, threat intelligence, alerting, PostgreSQL, Elasticsearch, Redis, Prometheus, and Grafana.
-
-More versions: [docs/resume-summary.md](docs/resume-summary.md)
+---
 
 ## Future Improvements
 
-- Authentication and RBAC
-- TLS and secret management
-- Alembic migrations
-- Distributed tracing
-- CI/CD with image scanning
 - Kubernetes deployment manifests
-- Load testing and SLO alerting
+- cloud-native scaling patterns
+- authentication and role-based access control
+- TLS and secrets management
+- Alembic database migrations
+- SIEM integrations
+- advanced external threat feeds
+- LLM-assisted investigations
+- distributed tracing
+- CI/CD security scanning
+- load testing and SLO alerting
+
+---
 
 ## License
 
-MIT License. See [LICENSE](LICENSE).
+This project is licensed under the **MIT License**. See [LICENSE](LICENSE).
+
