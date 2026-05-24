@@ -1,12 +1,13 @@
-import { Outlet } from "react-router-dom";
-import { Activity, BarChart3, Bell, Database, LayoutDashboard, Search, Settings } from "lucide-react";
+import { NavLink, Outlet } from "react-router-dom";
+import { Activity, BarChart3, Bell, BrainCircuit, LayoutDashboard, Radio, Search, Server } from "lucide-react";
 
 const navigationItems = [
-  { label: "Overview", icon: LayoutDashboard, active: true },
-  { label: "Streams", icon: Activity, active: false },
-  { label: "Storage", icon: Database, active: false },
-  { label: "Insights", icon: BarChart3, active: false },
-  { label: "Settings", icon: Settings, active: false },
+  { label: "Overview", href: "/", icon: LayoutDashboard },
+  { label: "Live Stream", href: "/live", icon: Radio },
+  { label: "Risk Analytics", href: "/risk", icon: BarChart3 },
+  { label: "ML Predictions", href: "/predictions", icon: BrainCircuit },
+  { label: "Search", href: "/search", icon: Search },
+  { label: "System Health", href: "/health", icon: Server },
 ];
 
 export function DashboardLayout() {
@@ -18,25 +19,26 @@ export function DashboardLayout() {
             <Activity size={22} />
           </div>
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-cyan-200">Streaming Analytics</p>
-            <p className="text-xs text-slate-400">Enterprise Console</p>
+            <p className="text-sm font-semibold uppercase text-cyan-200">Streaming Analytics</p>
+            <p className="text-xs text-slate-400">AI Operations Console</p>
           </div>
         </div>
 
         <nav className="mt-10 space-y-1">
           {navigationItems.map((item) => (
-            <button
-              key={item.label}
-              className={`flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm transition ${
-                item.active
-                  ? "bg-cyan-400/12 text-cyan-100"
-                  : "text-slate-400 hover:bg-white/5 hover:text-slate-100"
-              }`}
-              type="button"
+            <NavLink
+              key={item.href}
+              to={item.href}
+              end={item.href === "/"}
+              className={({ isActive }) =>
+                `flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm transition ${
+                  isActive ? "bg-cyan-400/12 text-cyan-100" : "text-slate-400 hover:bg-white/5 hover:text-slate-100"
+                }`
+              }
             >
               <item.icon size={18} />
               <span>{item.label}</span>
-            </button>
+            </NavLink>
           ))}
         </nav>
       </aside>
@@ -45,19 +47,26 @@ export function DashboardLayout() {
         <header className="sticky top-0 z-20 border-b border-white/10 bg-surface-950/88 px-4 py-4 backdrop-blur md:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Phase 1 Foundation</p>
-              <h1 className="mt-1 text-xl font-semibold text-white">Operational Control Plane</h1>
+              <p className="text-xs font-medium uppercase text-slate-500">Phase 6 Enterprise Dashboard</p>
+              <h1 className="mt-1 text-xl font-semibold text-white">Real-Time AI Analytics Interface</h1>
             </div>
             <div className="flex items-center gap-3">
               <div className="hidden min-w-72 items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-slate-400 md:flex">
                 <Search size={16} />
-                <span className="text-sm">Search services, streams, incidents</span>
+                <span className="text-sm">Search telemetry, entities, predictions</span>
               </div>
               <button className="grid h-10 w-10 place-items-center rounded-md border border-white/10 bg-white/5 text-slate-300" type="button" aria-label="Notifications">
                 <Bell size={18} />
               </button>
             </div>
           </div>
+          <nav className="mt-4 flex gap-2 overflow-x-auto lg:hidden">
+            {navigationItems.map((item) => (
+              <NavLink key={item.href} to={item.href} end={item.href === "/"} className={({ isActive }) => `whitespace-nowrap rounded-md px-3 py-2 text-sm ${isActive ? "bg-cyan-400/12 text-cyan-100" : "bg-white/5 text-slate-400"}`}>
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
         </header>
 
         <main className="px-4 py-6 md:px-8">

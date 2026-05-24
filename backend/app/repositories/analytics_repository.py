@@ -43,3 +43,47 @@ class AnalyticsRepository:
             )
         )
 
+    def average_ml_risk(self, db: Session) -> float:
+        return float(db.scalar(select(func.avg(AnomalyPrediction.ml_risk_score))) or 0.0)
+
+    def anomaly_count(self, db: Session) -> int:
+        return db.scalar(select(func.count()).select_from(AnomalyPrediction).where(AnomalyPrediction.raw_payload["is_anomaly"].as_boolean() == True)) or 0
+
+    def severity_distribution(self, db: Session) -> list[tuple[str, int]]:
+        rows = db.execute(
+            select(AnomalyPrediction.severity, func.count())
+            .where(AnomalyPrediction.severity.is_not(None))
+            .group_by(AnomalyPrediction.severity)
+            .order_by(desc(func.count()))
+        ).all()
+        return [(row[0], int(row[1])) for row in rows]
+
+    def event_type_distribution(self, db: Session) -> list[tuple[str, int]]:
+        rows = db.execute(
+            select(TelemetryEvent.event_type, func.count())
+            .where(TelemetryEvent.event_type.is_not(None))
+            .group_by(TelemetryEvent.event_type)
+            .order_by(desc(func.count()))
+        ).all()
+        return [(row[0], int(row[1])) for row in rows]
+
+    def recent_predictions_for_charts(self, db: Session, limit: int = 200) -> list[AnomalyPrediction]:
+        return list(db.scalars(select(AnomalyPrediction).order_by(desc(AnomalyPrediction.timestamp), desc(AnomalyPrediction.id)).limit(limit)))
+
+    def recent_events_for_charts(self, db: Session, limit: int = 500) -> list[TelemetryEvent]:
+        return list(db.scalars(select(TelemetryEvent).order_by(desc(TelemetryEvent.timestamp), desc(TelemetryEvent.id)).limit(limit)))
+
+    def top_entities(self, db: Session, limit: int = 10) -> list[tuple[str, float, int, str | None]]:
+        rows = db.execute(
+            select(
+                AnomalyPrediction.entity_id,
+                func.max(AnomalyPrediction.ml_risk_score),
+                func.count(),
+                func.max(AnomalyPrediction.severity),
+            )
+            .where(AnomalyPrediction.entity_id.is_not(None))
+            .group_by(AnomalyPrediction.entity_id)
+            .order_by(desc(func.max(AnomalyPrediction.ml_risk_score)))
+            .limit(limit)
+        ).all()
+        return [(str(row[0]), float(row[1] or 0.0), int(row[2]), row[3]) for row in rows]

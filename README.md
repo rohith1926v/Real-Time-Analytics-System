@@ -16,7 +16,7 @@ Synthetic Telemetry Generator
     -> prediction Kafka topics
     -> PostgreSQL, Elasticsearch, and Redis
     -> FastAPI query APIs
-    -> future dashboard integration
+    -> React real-time enterprise dashboard
 ```
 
 Current platform components:
@@ -40,6 +40,7 @@ Current platform components:
 | Processing | Apache Spark 3.5, PySpark, Structured Streaming, Spark Kafka connector |
 | ML | scikit-learn, pandas, NumPy, joblib, Pydantic |
 | Persistence/Search | PostgreSQL, Elasticsearch, Redis, SQLAlchemy |
+| Dashboard | React, TypeScript, Tailwind CSS, Recharts, WebSocket API |
 | Infrastructure | Docker, Docker Compose |
 | Future Platform | PostgreSQL, Elasticsearch, Redis, observability stack, CI/CD, cloud deployment |
 
@@ -230,6 +231,43 @@ Query APIs:
 
 Detailed Phase 5 documentation is available in `docs/phase-5-database-search.md`.
 
+## Enterprise Real-Time Dashboard
+
+Phase 6 adds a multi-page AI/security analytics dashboard:
+
+- Overview: streaming KPIs, risk posture, charts, and recent events.
+- Live Stream: real-time telemetry and prediction feed.
+- Risk Analytics: trend, volume, severity, and top entity visualizations.
+- ML Predictions: anomaly score, confidence, severity, explanations, and feature payloads.
+- Search: Elasticsearch-backed event search.
+- System Health: local service status for backend, database, cache, search, Kafka, Spark, and ML.
+
+Frontend routes:
+
+- `/`
+- `/live`
+- `/risk`
+- `/predictions`
+- `/search`
+- `/health`
+
+Dashboard APIs:
+
+- `GET /api/v1/dashboard/overview`
+- `GET /api/v1/dashboard/system-health`
+- `GET /api/v1/dashboard/risk-trends`
+- `GET /api/v1/dashboard/event-volume`
+- `GET /api/v1/dashboard/severity-distribution`
+- `GET /api/v1/dashboard/top-entities`
+- `WS /api/v1/ws/dashboard` (`ws://localhost:8000/api/v1/ws/dashboard` locally)
+
+Screenshots:
+
+- Add overview screenshot after running the local dashboard.
+- Add risk analytics screenshot after storage sink has persisted live records.
+
+Detailed Phase 6 documentation is available in `docs/phase-6-enterprise-dashboard.md`.
+
 ## Backend Development
 
 ```bash
@@ -268,7 +306,7 @@ The frontend includes a responsive dashboard shell, sidebar navigation, typed AP
 - Phase 3: Spark Structured Streaming ingestion, transformations, window metrics, feature engineering, and analytics Kafka sinks.
 - Phase 4: ML anomaly detection training pipeline, streaming inference worker, and prediction Kafka topic.
 - Phase 5: Local PostgreSQL, Elasticsearch, Redis, storage sink persistence, and FastAPI query APIs.
-- Phase 6: Elasticsearch indexing, analytics APIs, and dashboard modules.
+- Phase 6: Enterprise real-time React dashboard, dashboard APIs, charts, tables, search, and WebSocket updates.
 - Phase 7: Monitoring, alerting, tracing, CI/CD, and cloud deployment.
 
 ## Current Scope

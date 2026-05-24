@@ -10,6 +10,13 @@ The backend is the FastAPI service layer for the Real-Time Streaming Analytics S
 - `GET /api/v1/predictions/{entity_id}`
 - `GET /api/v1/risks/high`
 - `GET /api/v1/search/events?q=...`
+- `GET /api/v1/dashboard/overview`
+- `GET /api/v1/dashboard/system-health`
+- `GET /api/v1/dashboard/risk-trends`
+- `GET /api/v1/dashboard/event-volume`
+- `GET /api/v1/dashboard/severity-distribution`
+- `GET /api/v1/dashboard/top-entities`
+- `WS /api/v1/ws/dashboard`
 
 ## Data Sources
 
@@ -29,4 +36,3 @@ When running through Docker Compose, the backend uses:
 DATABASE_URL=postgresql+psycopg://streaming_user:streaming_password@streaming-analytics-postgres:5432/streaming_analytics
 ELASTICSEARCH_HOST=http://streaming-analytics-elasticsearch:9200
 ```
-
