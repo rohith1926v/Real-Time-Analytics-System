@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { Activity, BarChart3, Bell, BrainCircuit, FolderKanban, Gauge, LayoutDashboard, Radio, Search, Server, Siren } from "lucide-react";
+import { Activity, BarChart3, Bell, BrainCircuit, Crosshair, FolderKanban, Gauge, GitBranch, LayoutDashboard, Network, Radio, Search, Server, ShieldCheck, Siren, Users } from "lucide-react";
 
 const navigationItems = [
   { label: "Overview", href: "/", icon: LayoutDashboard },
@@ -8,6 +8,12 @@ const navigationItems = [
   { label: "ML Predictions", href: "/predictions", icon: BrainCircuit },
   { label: "Alerts", href: "/alerts", icon: Siren },
   { label: "Incidents", href: "/incidents", icon: FolderKanban },
+  { label: "Threat Intel", href: "/threat-intelligence", icon: Crosshair },
+  { label: "Detections", href: "/detection-engineering", icon: ShieldCheck },
+  { label: "Threat Hunting", href: "/threat-hunting", icon: GitBranch },
+  { label: "MITRE ATT&CK", href: "/mitre-attack", icon: Network },
+  { label: "Entities", href: "/entities", icon: Users },
+  { label: "Attack Timeline", href: "/attack-timeline", icon: Activity },
   { label: "Search", href: "/search", icon: Search },
   { label: "System Health", href: "/health", icon: Server },
   { label: "Observability", href: "/observability", icon: Gauge },

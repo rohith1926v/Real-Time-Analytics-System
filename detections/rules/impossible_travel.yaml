@@ -1,0 +1,12 @@
+id: impossible_travel
+name: Impossible Travel Login
+description: Detects login behavior inconsistent with normal geography.
+enabled: true
+severity: medium
+tactic: Initial Access
+technique: Valid Accounts
+mitre_id: T1078
+conditions:
+  keywords: [impossible_travel, geo_login_variance, high_risk_geo, login]
+  min_risk_score: 50
+score: 72

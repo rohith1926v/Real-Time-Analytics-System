@@ -1,0 +1,13 @@
+id: high_risk_geo_login
+name: High Risk Geo Login
+description: Detects logins from countries in the local high-risk watchlist.
+enabled: true
+severity: medium
+tactic: Initial Access
+technique: Valid Accounts
+mitre_id: T1078
+conditions:
+  keywords: [country, high_risk_geo, login]
+  countries: [North Korea, Russia, Iran]
+  min_risk_score: 45
+score: 68

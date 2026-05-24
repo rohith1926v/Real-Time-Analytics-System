@@ -1,0 +1,12 @@
+id: suspicious_privilege_escalation
+name: Suspicious Privilege Escalation
+description: Detects suspicious administrative or privilege elevation behavior.
+enabled: true
+severity: critical
+tactic: Privilege Escalation
+technique: Valid Accounts
+mitre_id: T1078
+conditions:
+  keywords: [privilege, escalation, admin, sudo, root]
+  min_risk_score: 70
+score: 92

@@ -59,6 +59,7 @@ class MonitoringService:
             ("alert-engine", "Alert Engine", "security", "http://localhost:9103/metrics"),
             ("telemetry-producer", "Kafka Producer", "streaming", "http://localhost:9104/metrics"),
             ("telemetry-consumer", "Kafka Consumer", "streaming", "http://localhost:9105/metrics"),
+            ("threat-intelligence-engine", "Threat Intelligence Engine", "security", "http://localhost:9106/metrics"),
             ("prometheus", "Prometheus", "observability", "http://localhost:9090"),
         ]
         services = [self._service_from_target(job, name, category, endpoint, prometheus_targets, now) for job, name, category, endpoint in service_specs]
@@ -98,6 +99,9 @@ class MonitoringService:
             "records_persisted_total": "sum(records_persisted_total)",
             "alerts_generated_total": "sum(alerts_generated_total)",
             "critical_alerts_total": "sum(critical_alerts_total)",
+            "threat_events_processed_total": "sum(threat_events_processed_total)",
+            "ioc_enrichments_total": "sum(ioc_enrichments_total)",
+            "detection_rule_hits_total": "sum(detection_rule_hits_total)",
         }
         key_metrics: dict[str, float] = {}
         available = True

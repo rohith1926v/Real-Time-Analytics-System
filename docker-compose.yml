@@ -386,6 +386,46 @@ services:
     networks:
       - streaming-analytics-network
 
+  threat-intelligence-engine:
+    container_name: streaming-analytics-threat-intelligence-engine
+    build:
+      context: .
+      dockerfile: threat-intelligence-engine/Dockerfile
+    env_file:
+      - ./.env.example
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: streaming-analytics-kafka:29092
+      THREAT_INTEL_CONSUMER_GROUP: streaming-analytics-threat-intelligence
+      THREAT_INTEL_LOG_LEVEL: INFO
+      POSTGRES_HOST: streaming-analytics-postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: streaming_analytics
+      POSTGRES_USER: streaming_user
+      POSTGRES_PASSWORD: streaming_password
+      REDIS_HOST: streaming-analytics-redis
+      REDIS_PORT: 6379
+      ELASTICSEARCH_HOST: http://streaming-analytics-elasticsearch:9200
+      DETECTION_RULES_PATH: /app/rules
+      THREAT_INTEL_METRICS_PORT: 9106
+    ports:
+      - "9106:9106"
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_started
+      ml-inference:
+        condition: service_started
+      alert-engine:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - streaming-analytics-network
+
   prometheus:
     container_name: streaming-analytics-prometheus
     image: prom/prometheus:v2.55.1
@@ -403,6 +443,7 @@ services:
       - ml-inference
       - storage-sink
       - alert-engine
+      - threat-intelligence-engine
     networks:
       - streaming-analytics-network
 

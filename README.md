@@ -16,6 +16,7 @@ Synthetic Telemetry Generator
     -> prediction Kafka topics
     -> PostgreSQL, Elasticsearch, and Redis
     -> Alert engine and incident intelligence
+    -> Threat intelligence and detection engineering
     -> FastAPI query APIs
     -> React real-time enterprise dashboard
     -> Prometheus and Grafana observability
@@ -30,6 +31,8 @@ Current platform components:
 - `ml-models`: Isolation Forest training pipeline and real-time ML inference worker.
 - `storage-sink`: Kafka persistence worker for PostgreSQL, Elasticsearch, and Redis.
 - `alert-engine`: Real-time SOC alert generation, deduplication, and incident correlation.
+- `threat-intelligence-engine`: IOC enrichment, detection rules, MITRE mapping, threat scoring, entity profiling, and attack timelines.
+- `detections`: Local Sigma-like YAML detection rules.
 - `monitoring`: Prometheus configuration and provisioned Grafana dashboards.
 - `docs`: Phase documentation and operational runbooks.
 - `infrastructure`, `monitoring`, `architecture`, `datasets`, `ml-models`: reserved platform areas for upcoming phases.
@@ -47,6 +50,7 @@ Current platform components:
 | Dashboard | React, TypeScript, Tailwind CSS, Recharts, WebSocket API |
 | Infrastructure | Docker, Docker Compose |
 | Observability | Prometheus, Grafana, Python prometheus-client |
+| Threat Intelligence | Local IOC feeds, YAML detection rules, MITRE ATT&CK mapping, D3, React Flow, Framer Motion |
 | Future Platform | CI/CD, cloud deployment, Kubernetes, authentication/RBAC |
 
 ## Folder Structure
@@ -116,6 +120,7 @@ Service endpoints:
 | Spark Driver UI | `http://localhost:4040` |
 | Prometheus | `http://localhost:9090` |
 | Grafana | `http://localhost:3000` |
+| Threat Intel metrics | `http://localhost:9106/metrics` |
 
 Grafana default login is `admin / admin`.
 
@@ -369,6 +374,55 @@ Open:
 
 Detailed Phase 8 documentation is available in `docs/phase-8-observability-monitoring.md`.
 
+## Threat Intelligence And Detection Engineering
+
+Phase 9 adds a local XDR-style detection layer:
+
+```text
+Kafka + Spark + ML predictions
+    -> threat-intelligence-engine
+    -> IOC enrichment
+    -> YAML detection rules
+    -> MITRE ATT&CK mapping
+    -> threat scoring
+    -> entity profiles and attack timelines
+    -> React XDR investigation pages
+```
+
+Threat intelligence APIs:
+
+- `GET /api/v1/threat-intel/overview`
+- `GET /api/v1/threat-intel/iocs`
+- `GET /api/v1/threat-intel/entities`
+- `GET /api/v1/threat-intel/mitre`
+- `GET /api/v1/threat-intel/attack-timeline`
+- `GET /api/v1/threat-intel/risk-heatmap`
+- `GET /api/v1/threat-intel/threat-graph`
+- `GET /api/v1/threat-intel/search?q=...`
+- `WS /api/v1/ws/threat-intel`
+
+Detection and entity APIs:
+
+- `GET /api/v1/detections/rules`
+- `GET /api/v1/detections/rules/{rule_id}`
+- `GET /api/v1/detections/rule-stats`
+- `GET /api/v1/entities/{entity_id}`
+- `GET /api/v1/entities/high-risk`
+- `GET /api/v1/entities/search?q=...`
+- `GET /api/v1/mitre/tactics`
+- `GET /api/v1/mitre/techniques`
+
+Dashboard routes:
+
+- `/threat-intelligence`
+- `/detection-engineering`
+- `/threat-hunting`
+- `/mitre-attack`
+- `/entities`
+- `/attack-timeline`
+
+Detailed Phase 9 documentation is available in `docs/phase-9-threat-intelligence.md`.
+
 ## Backend Development
 
 ```bash
@@ -410,6 +464,7 @@ The frontend includes a responsive dashboard shell, sidebar navigation, typed AP
 - Phase 6: Enterprise real-time React dashboard, dashboard APIs, charts, tables, search, and WebSocket updates.
 - Phase 7: Real-time alert engine, incident intelligence, deduplication, SOC APIs, and dashboard integration.
 - Phase 8: Local/free Prometheus metrics, Grafana dashboards, monitoring APIs, and observability UI.
+- Phase 9: Local threat intelligence, detection engineering, MITRE mapping, entity intelligence, and attack timeline visualization.
 - Future: Tracing, CI/CD, cloud deployment, Kubernetes, authentication/RBAC.
 
 ## Current Scope

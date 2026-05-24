@@ -34,12 +34,25 @@ The backend is the FastAPI service layer for the Real-Time Streaming Analytics S
 - `GET /api/v1/monitoring/errors`
 - `GET /api/v1/monitoring/metrics-summary`
 - `GET /metrics`
+- `GET /api/v1/threat-intel/overview`
+- `GET /api/v1/threat-intel/iocs`
+- `GET /api/v1/threat-intel/entities`
+- `GET /api/v1/threat-intel/mitre`
+- `GET /api/v1/threat-intel/attack-timeline`
+- `GET /api/v1/threat-intel/risk-heatmap`
+- `GET /api/v1/threat-intel/threat-graph`
+- `GET /api/v1/detections/rules`
+- `GET /api/v1/detections/rule-stats`
+- `GET /api/v1/entities/high-risk`
+- `GET /api/v1/mitre/tactics`
+- `WS /api/v1/ws/threat-intel`
 
 ## Data Sources
 
 - PostgreSQL stores structured telemetry, metrics, features, predictions, and dead letters.
 - Elasticsearch backs search queries and is optional-safe.
 - Prometheus backs monitoring summaries when available.
+- Threat intelligence tables back IOC, MITRE, detection rule, entity, and timeline APIs.
 - Existing health endpoint remains available at `GET /api/v1/health`.
 
 ## Local Development

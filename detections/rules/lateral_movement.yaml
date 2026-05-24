@@ -1,0 +1,12 @@
+id: lateral_movement
+name: Lateral Movement Pattern
+description: Detects remote service and east-west movement indicators.
+enabled: true
+severity: high
+tactic: Lateral Movement
+technique: Remote Services
+mitre_id: T1021
+conditions:
+  keywords: [lateral, rdp, smb, admin_share, remote service]
+  min_risk_score: 60
+score: 86
