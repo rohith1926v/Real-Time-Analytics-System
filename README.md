@@ -379,46 +379,6 @@ See [docs/production-readiness-checklist.md](docs/production-readiness-checklist
 
 ---
 
-## Resume Value
-
-This project demonstrates practical engineering depth across several high-value domains.
-
-### AI/ML Engineering
-
-- real-time ML inference service
-- Isolation Forest anomaly detection
-- feature engineering pipeline
-- model artifact loading and scoring
-- typed prediction events
-
-### Cybersecurity Analytics
-
-- SOC alerting workflows
-- incident correlation
-- MITRE ATT&CK mapping
-- IOC enrichment
-- threat hunting
-- entity intelligence
-- detection engineering
-
-### Distributed Systems
-
-- Kafka event-driven architecture
-- Spark Structured Streaming
-- multi-service Docker Compose platform
-- stream processing and sink consumers
-- fault-tolerant local development workflows
-
-### MLOps + Observability
-
-- Prometheus metrics
-- Grafana dashboards
-- health checks
-- service-level instrumentation
-- production-readiness documentation
-
-More resume-ready wording is available in [docs/resume-summary.md](docs/resume-summary.md).
-
 ---
 
 ## Documentation
