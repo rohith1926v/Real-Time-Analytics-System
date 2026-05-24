@@ -166,33 +166,55 @@ For deeper diagrams, see [docs/architecture.md](docs/architecture.md).
 
 ---
 
-## Dashboard Screenshots
+## Platform Screenshots
 
-Create a `screenshots/` folder and place images using the filenames below.
+### Overview Dashboard
 
-### Main Dashboard
+Real-time AI telemetry analytics overview with event volume, anomaly counts, risk trends, severity distribution, and live WebSocket status.
 
-![Dashboard](./screenshots/dashboard.png)
+![Overview Dashboard](./screenshots/dashboard-overview.png)
+
+### Real-Time Alerts Dashboard
+
+SOC alert triage view with live alert feed, severity badges, anomaly explanations, risk scores, and open incident counters.
+
+![Real-Time Alerts Dashboard](./screenshots/alerts-dashboard.png)
+
+### Incident Correlation Dashboard
+
+Incident intelligence workspace showing correlated alerts, affected entities, escalation state, and live SOC activity.
+
+![Incident Correlation Dashboard](./screenshots/incidents-dashboard.png)
 
 ### Threat Intelligence Dashboard
+
+XDR-style threat intelligence view with enriched events, rule hits, threat relationship graph, score distribution, and IOC activity.
 
 ![Threat Intelligence Dashboard](./screenshots/threat-intelligence.png)
 
 ### MITRE ATT&CK Dashboard
 
-![MITRE ATTACK Dashboard](./screenshots/mitre-attack.png)
+ATT&CK matrix coverage view for active tactics, mapped techniques, MITRE IDs, and technique frequency signals.
 
-### Incident Correlation Dashboard
+![MITRE ATTACK Matrix](./screenshots/mitre-attack-matrix.png)
 
-![Incident Correlation Dashboard](./screenshots/incidents.png)
+### Observability Dashboard
 
-### Real-Time Alerts Dashboard
+Platform health and monitoring page with service status, pipeline counters, metric summaries, and Prometheus/Grafana links.
 
-![Real-Time Alerts Dashboard](./screenshots/alerts.png)
+![Observability Dashboard](./screenshots/observability-dashboard.png)
 
-### FastAPI Swagger Docs
+### Grafana Dashboard
 
-![FastAPI Swagger Docs](./screenshots/swagger-docs.png)
+Local Grafana instance for operational dashboards and visual monitoring of the streaming analytics platform.
+
+![Grafana Dashboard](./screenshots/grafana-dashboard.png)
+
+### Prometheus Dashboard
+
+Prometheus query interface for inspecting scraped metrics, service targets, and time-series telemetry.
+
+![Prometheus Dashboard](./screenshots/prometheus-dashboard.png)
 
 ---
 
@@ -363,4 +385,3 @@ See [docs/production-readiness-checklist.md](docs/production-readiness-checklist
 ## License
 
 This project is licensed under the **MIT License**. See [LICENSE](LICENSE).
-
