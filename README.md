@@ -309,27 +309,6 @@ Unix/macOS/Linux:
 
 ---
 
-## Local URLs
-
-| Service | URL |
-| --- | --- |
-| React Dashboard | `http://localhost:5173` |
-| FastAPI Docs | `http://localhost:8000/docs` |
-| Kafka UI | `http://localhost:8080` |
-| Spark Master UI | `http://localhost:8081` |
-| Spark Driver UI | `http://localhost:4040` |
-| Elasticsearch Health | `http://localhost:9200/_cluster/health` |
-| Prometheus | `http://localhost:9090` |
-| Grafana | `http://localhost:3000` |
-
-Grafana default login:
-
-```text
-admin / admin
-```
-
----
-
 ## Observability
 
 The platform includes a local monitoring stack:
@@ -378,56 +357,6 @@ This project is intentionally built with production-style architecture patterns:
 See [docs/production-readiness-checklist.md](docs/production-readiness-checklist.md).
 
 ---
-
----
-
-## Documentation
-
-| Document | Description |
-| --- | --- |
-| [Architecture](docs/architecture.md) | Full platform architecture and data-flow diagrams |
-| [Demo Guide](docs/demo-guide.md) | Recruiter/demo walkthrough |
-| [Resume Summary](docs/resume-summary.md) | Resume bullets, LinkedIn copy, GitHub summary |
-| [Production Readiness](docs/production-readiness-checklist.md) | Production hardening checklist |
-| [Troubleshooting](docs/troubleshooting.md) | Common local setup issues |
-| [Phase 9 Threat Intelligence](docs/phase-9-threat-intelligence.md) | Threat intelligence implementation notes |
-| [Phase 8 Observability](docs/phase-8-observability-monitoring.md) | Monitoring implementation notes |
-
----
-
-## Repository Structure
-
-```text
-backend/                      FastAPI APIs and query services
-frontend/                     React TypeScript SOC/XDR dashboard
-kafka-producers/              Synthetic telemetry producer and consumer
-spark-jobs/                   Spark Structured Streaming pipeline
-ml-models/                    ML training and streaming inference
-storage-sink/                 Kafka-to-database/search/cache persistence
-alert-engine/                 SOC alerting and incident correlation
-threat-intelligence-engine/   IOC enrichment, MITRE mapping, detection rules
-detections/rules/             Local YAML detection rules
-monitoring/                   Prometheus and Grafana provisioning
-scripts/                      Startup, stop, restart, verification, health checks
-docs/                         Architecture, demo, phase docs, resume material
-screenshots/                  README screenshot assets
-```
-
----
-
-## Future Improvements
-
-- Kubernetes deployment manifests
-- cloud-native scaling patterns
-- authentication and role-based access control
-- TLS and secrets management
-- Alembic database migrations
-- SIEM integrations
-- advanced external threat feeds
-- LLM-assisted investigations
-- distributed tracing
-- CI/CD security scanning
-- load testing and SLO alerting
 
 ---
 
